@@ -15,6 +15,7 @@ Option Explicit
 
 Private mPrecioUnitario As Double
 Private mCantidad As Integer
+Private mDescripcion As String
 
 ' Propiedad para el precio unitario
 Public Property Get PrecioUnitario() As Double
@@ -36,6 +37,15 @@ Public Property Let Cantidad(ByVal Valor As Integer)
     Else
         mCantidad = Valor
     End If
+End Property
+
+'Propiedad para la descripcion
+Public Property Get Descripcion() As String
+    Descripcion = mDescripcion
+End Property
+
+Public Property Let Descripcion(ByVal Valor As String)
+    mDescripcion = Valor
 End Property
 
 ' Calcular el precio neto

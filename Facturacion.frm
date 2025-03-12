@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
 Begin VB.Form Facturacion 
    Caption         =   "Formulario"
    ClientHeight    =   9135
@@ -47,6 +47,14 @@ Begin VB.Form Facturacion
          TabIndex        =   23
          Top             =   6960
          Width           =   13095
+         Begin VB.CommandButton Command1 
+            Caption         =   "Command1"
+            Height          =   615
+            Left            =   6360
+            TabIndex        =   36
+            Top             =   480
+            Width           =   975
+         End
          Begin VB.CommandButton ImpFederal 
             Caption         =   "&Comprobante federal parts"
             BeginProperty Font 
@@ -658,16 +666,63 @@ Dim alertaMostrada As Boolean
 Private Sub Form_Load()
     Producto.Cantidad = 0
     Producto.PrecioUnitario = 0
+    Producto.Descripcion = ""
+End Sub
+
+
+Private Sub Command1_Click()
+Dim conn As New ADODB.Connection
+Dim rs As New ADODB.Recordset
+
+    ' Cadena de conexión
+    Dim strConn As String
+    strConn = "Provider=SQLOLEDB;Data Source=facturacion_neumaticos.mssql.somee.com;" & _
+              "Initial Catalog=facturacion_neumaticos;User ID=mlopez_cliente_2_SQLLogin_2;" & _
+              "Password=khuwpknwob;Persist Security Info=False;" & _
+              "TrustServerCertificate=True"
+
+    ' Intentar la conexión
+    On Error GoTo ErrHandler
+    conn.Open strConn
+    
+    ' Consulta SQL
+    Dim sql As String
+    sql = "select id, nombre from usuarios" ' Ajusta según tu tabla
+
+    ' Ejecutar consulta
+    rs.Open sql, conn, adOpenStatic, adLockReadOnly
+
+    ' Recorrer los resultados
+    If Not rs.EOF Then
+        Do While Not rs.EOF
+            MsgBox "ID: " & rs("id") & " - Nombre: " & rs("nombre"), vbInformation, "Registro"
+            rs.MoveNext
+        Loop
+    Else
+        MsgBox "No hay registros.", vbExclamation, "Consulta"
+    End If
+
+    ' Cerrar conexión
+    rs.Close
+    conn.Close
+    Exit Sub
+
+ErrHandler:
+    MsgBox "Error: " & Err.Description, vbCritical, "Error"
 End Sub
 
 Private Sub btnIngresarproducto_Click()
-    If Producto.Cantidad = 0 Then
+
+    If Producto.Descripcion = "" Then
+        MostrarAlerta "Ingrese una descripción del producto."
+    ElseIf Producto.Cantidad = 0 Then
         MostrarAlerta "La cantidad no puede ser cero. Ingrese un valor válido."
     ElseIf Producto.PrecioUnitario = 0 Then
         MostrarAlerta "El precio unitario no puede ser cero. Ingrese un valor válido."
     Else
         MsgBox "Paso"
     End If
+    
 End Sub
 
 Private Sub Preciouni_KeyPress(KeyAscii As Integer)
@@ -710,3 +765,6 @@ Private Sub ActualizarPrecio()
     precioNeto.Text = FormatoPrecio(Producto.CalcularPrecioNeto())
 End Sub
 
+Private Sub txtDescripcion_LostFocus()
+    Producto.Descripcion = txtDescripcion.Text
+End Sub
