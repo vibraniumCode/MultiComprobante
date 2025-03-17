@@ -1,0 +1,24 @@
+Línea 66: la clase Crystal.CrystalReport del control CrystalReport1 no era una clase de control cargada.
+Línea 584: la clase MSComctlLib.ListView del control Grilla no era una clase de control cargada.
+Línea 69: el nombre de la propiedad _ExtentX de CrystalReport1 no es válido.
+Línea 70: el nombre de la propiedad _ExtentY de CrystalReport1 no es válido.
+Línea 71: el nombre de la propiedad _Version de CrystalReport1 no es válido.
+Línea 72: el nombre de la propiedad WindowControlBox de CrystalReport1 no es válido.
+Línea 73: el nombre de la propiedad WindowMaxButton de CrystalReport1 no es válido.
+Línea 74: el nombre de la propiedad WindowMinButton de CrystalReport1 no es válido.
+Línea 75: el nombre de la propiedad WindowState de CrystalReport1 no es válido.
+Línea 76: el nombre de la propiedad PrintFileLinesPerPage de CrystalReport1 no es válido.
+Línea 77: el nombre de la propiedad WindowShowNavigationCtls de CrystalReport1 no es válido.
+Línea 78: el nombre de la propiedad WindowShowCancelBtn de CrystalReport1 no es válido.
+Línea 79: el nombre de la propiedad WindowShowPrintBtn de CrystalReport1 no es válido.
+Línea 80: el nombre de la propiedad WindowShowExportBtn de CrystalReport1 no es válido.
+Línea 81: el nombre de la propiedad WindowShowZoomCtl de CrystalReport1 no es válido.
+Línea 82: el nombre de la propiedad WindowShowProgressCtls de CrystalReport1 no es válido.
+Línea 590: el nombre de la propiedad _ExtentX de Grilla no es válido.
+Línea 591: el nombre de la propiedad _ExtentY de Grilla no es válido.
+Línea 592: el nombre de la propiedad LabelWrap de Grilla no es válido.
+Línea 593: el nombre de la propiedad HideSelection de Grilla no es válido.
+Línea 594: el nombre de la propiedad FullRowSelect de Grilla no es válido.
+Línea 595: el nombre de la propiedad GridLines de Grilla no es válido.
+Línea 596: el nombre de la propiedad _Version de Grilla no es válido.
+Línea 610: el nombre de la propiedad NumItems de Grilla no es válido.

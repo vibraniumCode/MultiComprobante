@@ -25,3 +25,6 @@ Public Sub MostrarAlerta(ByVal mensaje As String)
     MsgBox mensaje, vbExclamation, "Advertencia"
 End Sub
 
+Public Function FormatearNumeroFactura(ByVal numero As Long) As String
+    FormatearNumeroFactura = Format(numero, "00000000000000000000000000000000000")
+End Function
