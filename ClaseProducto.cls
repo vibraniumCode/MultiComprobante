@@ -13,9 +13,19 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
+Private mPrecioNeto As Double
 Private mPrecioUnitario As Double
 Private mCantidad As Integer
 Private mDescripcion As String
+
+' Propiedad para el precio unitario
+Public Property Get PrecioNeto() As Double
+    PrecioNeto = mPrecioNeto
+End Property
+
+Public Property Let PrecioNeto(ByVal Valor As Double)
+    mPrecioNeto = Valor
+End Property
 
 ' Propiedad para el precio unitario
 Public Property Get PrecioUnitario() As Double
@@ -58,4 +68,3 @@ Public Function CalcularPrecioNeto() As Double
     
     CalcularPrecioNeto = mPrecioUnitario * mCantidad
 End Function
-

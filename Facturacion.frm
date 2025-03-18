@@ -47,14 +47,6 @@ Begin VB.Form Facturacion
          TabIndex        =   23
          Top             =   6960
          Width           =   13095
-         Begin VB.CommandButton Command1 
-            Caption         =   "Command1"
-            Height          =   615
-            Left            =   6360
-            TabIndex        =   36
-            Top             =   480
-            Width           =   975
-         End
          Begin VB.CommandButton ImpFederal 
             Caption         =   "&Comprobante federal parts"
             BeginProperty Font 
@@ -558,7 +550,7 @@ Begin VB.Form Facturacion
             NumItems        =   0
          End
       End
-      Begin VB.TextBox Text1 
+      Begin VB.TextBox factura 
          BackColor       =   &H8000000F&
          BorderStyle     =   0  'None
          Enabled         =   0   'False
@@ -574,12 +566,10 @@ Begin VB.Form Facturacion
          Height          =   375
          Left            =   1800
          TabIndex        =   2
-         Text            =   "00000000000000000000000000000000001"
          Top             =   240
          Width           =   4815
       End
-      Begin VB.Label Label5 
-         Caption         =   "FECHA: 08/03/2025"
+      Begin VB.Label fecha 
          BeginProperty Font 
             Name            =   "MS Sans Serif"
             Size            =   8.25
@@ -662,67 +652,429 @@ Attribute VB_Exposed = False
 Option Explicit
 Dim Producto As New ClaseProducto
 Dim alertaMostrada As Boolean
+Dim idProducto As Long
+Dim nroFactura As Long
 
-Private Sub Form_Load()
-    Producto.Cantidad = 0
-    Producto.PrecioUnitario = 0
-    Producto.Descripcion = ""
+Private Sub Actualizar_Click()
+    Dim test As String
+    
+    test = Grilla.SelectedItem.Text
+    
+    ' Verificar si hay elementos en la grilla
+    If Grilla.ListItems.Count = 0 Then
+        MsgBox "No hay productos para actualizar", vbExclamation
+        Exit Sub
+    End If
+    
+    ' Verificar si hay un elemento seleccionado
+    On Error Resume Next
+    
+    If Err.Number <> 0 Then
+        MsgBox "Por favor, seleccione un producto para actualizar", vbExclamation
+        Exit Sub
+    End If
+    On Error GoTo 0
+    
+    ' Una vez confirmado que hay un elemento seleccionado, cargar sus datos
+    Call CargarDatosParaActualizar
+    
+    ' Cambiar visibilidad de los botones (si es necesario)
+    btnIngresarproducto.Visible = False
+    btnActualizarproducto.Visible = True
 End Sub
 
-
-Private Sub Command1_Click()
-Dim conn As New ADODB.Connection
-Dim rs As New ADODB.Recordset
-
-    ' Cadena de conexión
-    Dim strConn As String
-    strConn = "Provider=SQLOLEDB;Data Source=facturacion_neumaticos.mssql.somee.com;" & _
-              "Initial Catalog=facturacion_neumaticos;User ID=mlopez_cliente_2_SQLLogin_2;" & _
-              "Password=khuwpknwob;Persist Security Info=False;" & _
-              "TrustServerCertificate=True"
-
-    ' Intentar la conexión
-    On Error GoTo ErrHandler
-    conn.Open strConn
+Private Sub CargarDatosParaActualizar()
+    ' Obtener el ID del producto seleccionado
+    idProducto = CLng(Grilla.SelectedItem.Text)
     
-    ' Consulta SQL
-    Dim sql As String
-    sql = "select id, nombre from usuarios" ' Ajusta según tu tabla
+    ' Guardar el ID en el Tag del formulario
+    Me.Tag = CStr(idProducto)
+    
+    ' Cargar datos en los TextBox
+    txtDescripcion.Text = Grilla.SelectedItem.SubItems(1)
+    btnCantidad.Text = Grilla.SelectedItem.SubItems(2)
+    Preciouni.Text = Grilla.SelectedItem.SubItems(3)
+    precioNeto.Text = Grilla.SelectedItem.SubItems(4)
+    ' Agregar más campos según sea necesario
+End Sub
 
-    ' Ejecutar consulta
-    rs.Open sql, conn, adOpenStatic, adLockReadOnly
-
-    ' Recorrer los resultados
-    If Not rs.EOF Then
-        Do While Not rs.EOF
-            MsgBox "ID: " & rs("id") & " - Nombre: " & rs("nombre"), vbInformation, "Registro"
-            rs.MoveNext
-        Loop
-    Else
-        MsgBox "No hay registros.", vbExclamation, "Consulta"
+Private Sub btnActualizarproducto_Click()
+' Validar los datos
+    If Trim(txtDescripcion.Text) = "" Then
+        MsgBox "La descripción no puede estar vacía", vbExclamation
+        txtDescripcion.SetFocus
+        Exit Sub
     End If
-
-    ' Cerrar conexión
-    rs.Close
-    conn.Close
+    
+    ' Conectar a la base de datos
+    Call ConectarBD
+    
+    If txtDescripcion.Text = "" Then
+        MostrarAlerta "Ingrese una descripción del producto."
+        Exit Sub
+    ElseIf btnCantidad = 0 Then
+        MostrarAlerta "La cantidad no puede ser cero. Ingrese un valor válido."
+        Exit Sub
+    ElseIf Preciouni.Text = 0 Then
+        MostrarAlerta "El precio unitario no puede ser cero. Ingrese un valor válido."
+        Exit Sub
+    End If
+    
+    ' Actualizar el registro en la base de datos
+    On Error GoTo ErrHandler
+    conn.Execute "UPDATE PRODUCTOS_VENTAS SET " & _
+                "DESCRIPCION = '" & Replace(txtDescripcion.Text, "'", "''") & "', " & _
+                "CANTIDAD = " & Replace(btnCantidad.Text, ",", ".") & ", " & _
+                "PRECIO_UNITARIO = " & Producto.precioUnitario & ", " & _
+                "PRECIO_NETO = " & Producto.precioNeto & _
+                " WHERE ID = " & idProducto
+    
+    ' Desconectar de la base de datos
+    Call DesconectarBD
+    
+    ' Actualizar la grilla
+    Call CargarGrilla
+    Call CalculoGral
+    ' Limpiar los campos y restablecer botones
+    LimpiarCampos
+    btnIngresarproducto.Visible = True
+    btnActualizarproducto.Visible = False
+    
+    MsgBox "Producto actualizado correctamente", vbInformation
+    
     Exit Sub
-
+    
 ErrHandler:
-    MsgBox "Error: " & Err.Description, vbCritical, "Error"
+    MsgBox "Error al actualizar el producto: " & Err.Description, vbCritical, "Error"
+    Call DesconectarBD
+End Sub
+
+Private Sub Eliminar_Click()
+    Dim idProducto As Long
+    
+    ' Verificar si hay un elemento seleccionado
+    If Grilla.SelectedItem Is Nothing Then
+        MsgBox "Por favor, seleccione un elemento para eliminar", vbExclamation
+        Exit Sub
+    End If
+    
+    ' Obtener el ID del producto desde el ListView
+    idProducto = CLng(Grilla.SelectedItem.Text)
+    
+    ' Conectar a la base de datos
+    Call ConectarBD
+    
+    ' Eliminar el producto de la base de datos usando Execute
+    On Error GoTo ErrHandler
+    conn.Execute "DELETE FROM PRODUCTOS_VENTAS WHERE id = " & idProducto
+    
+    ' Desconectar de la base de datos
+    Call DesconectarBD
+    
+    ' Eliminar el item seleccionado del ListView
+    Grilla.ListItems.Remove Grilla.SelectedItem.Index
+    
+    MsgBox "Registro eliminado correctamente", vbInformation
+    Call CalculoGral
+    Exit Sub
+    
+ErrHandler:
+    MsgBox "Error al eliminar el producto: " & Err.Description, vbCritical, "Error"
+    Call DesconectarBD
+End Sub
+
+Private Sub Form_Load()
+    Dim cantidad As Integer
+    
+    fecha = "Fecha: " & Date
+    CargarNumeroFactura
+    
+    Producto.cantidad = 0
+    Producto.precioUnitario = 0
+    Producto.precioNeto = 0
+    Producto.descripcion = ""
+    
+    ' Conectar a la base de datos
+    Call ConectarBD
+
+    ' Configuración del ListView
+    With Grilla
+        .View = lvwReport
+        .ColumnHeaders.Add , , "Id", 1000
+        .ColumnHeaders.Add , , "Descripción", 2000
+        .ColumnHeaders.Add , , "Cantidad", 1000
+        .ColumnHeaders.Add , , "Precio Unitario", 1500
+        .ColumnHeaders.Add , , "Precio Neto", 1500
+    End With
+
+    ' Cargar datos en el ListView
+    Call CargarGrilla
+    
+    cantidad = Grilla.ListItems.Count
+    If cantidad > 0 Then
+        Call CalculoGral
+    End If
 End Sub
 
 Private Sub btnIngresarproducto_Click()
+Dim cmd As New ADODB.Command
+Dim facturaNumero As Double
 
-    If Producto.Descripcion = "" Then
+facturaNumero = Val(factura.Text)
+If Not IsNumeric(Producto.cantidad) Or Not IsNumeric(Producto.precioUnitario) Then
+    MsgBox "La cantidad y el precio deben ser números válidos.", vbCritical, "Error"
+    Exit Sub
+End If
+
+' Conectar a la base de datos utilizando el módulo de conexión
+    Call ConectarBD
+    
+    If Producto.descripcion = "" Then
         MostrarAlerta "Ingrese una descripción del producto."
-    ElseIf Producto.Cantidad = 0 Then
+        Exit Sub
+    ElseIf Producto.cantidad = 0 Then
         MostrarAlerta "La cantidad no puede ser cero. Ingrese un valor válido."
-    ElseIf Producto.PrecioUnitario = 0 Then
+        Exit Sub
+    ElseIf Producto.precioUnitario = 0 Then
         MostrarAlerta "El precio unitario no puede ser cero. Ingrese un valor válido."
-    Else
-        MsgBox "Paso"
+        Exit Sub
+    End If
+
+ 'Preparar comando SQL para insertar datos
+    On Error GoTo ErrHandler
+    With cmd
+        .ActiveConnection = conn
+        .CommandType = adCmdText
+        .CommandText = "INSERT INTO PRODUCTOS_VENTAS (DESCRIPCION, CANTIDAD, PRECIO_UNITARIO, PRECIO_NETO, FACTURA) VALUES (?, ?, ?, ?, ?)"
+        .Parameters.Append .CreateParameter("DESCRIPCION", adVarChar, adParamInput, 255, Producto.descripcion)
+        .Parameters.Append .CreateParameter("CANTIDAD", adInteger, adParamInput, , Producto.cantidad)
+        .Parameters.Append .CreateParameter("PRECIO_UNITARIO", adDouble, adParamInput, , Producto.precioUnitario)
+        .Parameters.Append .CreateParameter("PRECIO_NETO", adDouble, adParamInput, , Producto.precioNeto)
+        .Parameters.Append .CreateParameter("FACTURA", adDouble, adParamInput, , facturaNumero)
+        .Execute
+    End With
+
+    ' Actualizar el ListView después de la inserción
+    Call CargarGrilla
+    Call CalculoGral
+    LimpiarCampos
+    
+    ' Desconectar
+    Call DesconectarBD
+    Exit Sub
+
+ErrHandler:
+    MsgBox "Error al insertar: " & Err.Description, vbCritical, "Error"
+    Call DesconectarBD
+End Sub
+
+Private Sub Grilla_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+ ' Mostrar el menú contextual solo si se hace clic derecho
+    If Button = vbRightButton Then
+        ' Mostrar el menú emergente
+        PopupMenu mnuListView
+    End If
+End Sub
+
+Private Sub ImpArturo_Click()
+    Dim rs As New ADODB.Recordset
+    
+    On Error GoTo ManejadorErrores
+    
+    ' Conectar a la base de datos utilizando el módulo de conexión
+    Call ConectarBD
+    
+    ' Verificar que la conexión esté abierta
+    If conn.State = adStateClosed Then
+        MsgBox "Error: La conexión a la base de datos no se estableció correctamente.", vbCritical, "Error de conexión"
+        GoTo Finalizar
     End If
     
+    ' Obtener datos de la base
+    rs.Open "SELECT cantidad, descripcion, precio_unitario, precio_neto AS total FROM PRODUCTOS_VENTAS", conn, adOpenStatic, adLockReadOnly
+    
+    ' Cargar datos en el reporte
+    If rs.State = adStateOpen And Not rs.EOF Then
+        With RptArturo
+            Set .DataSource = rs
+            .Refresh    ' Añadido para asegurar que el reporte se actualiza
+            .Show
+        End With
+    Else
+        MsgBox "No se pudieron cargar los datos. Verifique la consulta o la conexión.", vbExclamation, "Aviso"
+    End If
+    
+    GoTo Finalizar
+    
+ManejadorErrores:
+    MsgBox "Error " & Err.Number & ": " & Err.Description, vbCritical, "Error en reporte"
+    
+Finalizar:
+    ' Cerrar el recordset si está abierto
+    If Not rs Is Nothing Then
+        If rs.State = adStateOpen Then rs.Close
+        Set rs = Nothing
+    End If
+    
+    ' Desconectar
+    Call DesconectarBD
+    Exit Sub
+End Sub
+
+
+
+Private Sub ImpFederal_Click()
+ Call GenerarComprobante
+End Sub
+
+Private Sub GenerarComprobante()
+    Dim archivo As Integer
+    Dim ruta As String
+    Dim i As Integer
+    Dim subtotal As Double, iva As Double, total As Double
+    ruta = "C:\comprobante.html"
+    archivo = FreeFile()
+    Open ruta For Output As #archivo
+    
+    ' Encabezado del HTML con diseño exacto al de la imagen
+    Print #archivo, "<html><head><title>Factura</title></head><body>"
+    Print #archivo, "<style>"
+    Print #archivo, "body { font-family: Arial, sans-serif; width: 800px; margin: auto; }"
+    Print #archivo, ".container { border: 1px solid #000; padding: 0; }"
+    Print #archivo, ".header { display: flex; border-bottom: 1px solid #000; position: relative; }"
+    Print #archivo, ".logo-section { width: 70%; border-right: 1px solid #000; padding: 10px; }"
+    Print #archivo, ".logo { width: 250px; display: block; margin-bottom: 10px; }"
+    Print #archivo, ".company-info { font-size: 12px; margin: 3px 0; }"
+    Print #archivo, ".company-name { font-weight: bold; }"
+    Print #archivo, ".email { color: blue; }"
+    Print #archivo, ".letter-box { position: absolute; top: 0; left: 70%; width: 6%; height: 70px; border-right: 1px solid #000; display: flex; align-items: center; justify-content: center; }"
+    Print #archivo, ".letter { font-size: 36px; font-weight: bold; }"
+    Print #archivo, ".factura-section { width: 30%; padding: 10px; display: flex; flex-direction: column; }"
+    Print #archivo, ".factura-label { font-size: 14px; text-align: left; margin-bottom: 5px; }"
+    Print #archivo, ".factura-num { font-size: 16px; font-weight: bold; margin-bottom: 20px; }"
+    Print #archivo, ".factura-info { text-align: left; }"
+    Print #archivo, ".vertical-line { position: absolute; top: 70px; left: 76%; width: 1px; height: calc(100% - 70px); background-color: #000; }"
+    Print #archivo, ".items-table { width: 100%; border-collapse: collapse; }"
+    Print #archivo, ".items-table th { background-color: #f5f5f5; font-size: 12px; border-bottom: 1px solid #000; padding: 8px 5px; text-align: center; }"
+    Print #archivo, ".items-table td { padding: 5px; text-align: center; font-size: 12px; }"
+    Print #archivo, ".watermark { position: relative; height: 400px; }"
+    Print #archivo, ".watermark-content { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; opacity: 0.1; }"
+    Print #archivo, ".watermark-logos { display: flex; justify-content: center; }"
+    Print #archivo, ".watermark-logo { margin: 0 20px; }"
+    Print #archivo, ".totals-section { border-top: 1px solid #000; display: flex; }"
+    Print #archivo, ".subtotal-section { width: 40%; padding: 10px; border-right: 1px solid #000; font-size: 12px; }"
+    Print #archivo, ".total-section { width: 60%; padding: 10px; text-align: right; font-size: 14px; }"
+    Print #archivo, ".footer { border-top: 1px solid #000; padding: 10px; font-size: 10px; text-align: center; }"
+    Print #archivo, "</style>"
+    
+    Print #archivo, "<div class='container'>"
+    
+    ' Header con disposición exacta según la imagen
+    Print #archivo, "<div class='header'>"
+    Print #archivo, "  <div class='logo-section'>"
+    Print #archivo, "    <img src='C:\Users\progr\Downloads\CLIENTE 2\LOGO1.jpg' class='logo'>"
+    Print #archivo, "    <p class='company-info company-name'>NEUMÁTICOS ARTURO S.R.L.</p>"
+    Print #archivo, "    <p class='company-info'>AV. SAN MARTÍN 1695 - 1678 CASEROS</p>"
+    Print #archivo, "    <p class='company-info'>TEL.: (011) 4734 - 8476</p>"
+    Print #archivo, "    <p class='company-info email'>ventas@neumaticosarturo.com.ar</p>"
+    Print #archivo, "    <p class='company-info'>I.V.A.: Responsable Inscripto</p>"
+    Print #archivo, "  </div>"
+    Print #archivo, "  <div class='letter-box'>"
+    Print #archivo, "    <div class='letter'>A</div>"
+    Print #archivo, "  </div>"
+    Print #archivo, "  <div class='vertical-line'></div>"
+    Print #archivo, "  <div class='factura-section'>"
+    Print #archivo, "    <div class='factura-label'>FACTURA</div>"
+    Print #archivo, "    <div class='factura-num'>N°0001- " & factura.Text & "</div>"
+    Print #archivo, "    <div class='factura-info'>"
+    Print #archivo, "      <p class='company-info'>FECHA: " & Format(Date, "dd/mm/yyyy") & "</p>"
+    Print #archivo, "      <p class='company-info'>C.U.I.T.: 33-71457404-9</p>"
+    Print #archivo, "      <p class='company-info'>ING. BRUTOS: 33-71457404-9</p>"
+    Print #archivo, "      <p class='company-info'>INICIO DE ACTIVIDADES: 08/2014</p>"
+    Print #archivo, "    </div>"
+    Print #archivo, "  </div>"
+    Print #archivo, "</div>"
+    
+    ' Table for items
+    Print #archivo, "<table class='items-table'>"
+    Print #archivo, "<tr><th>CANTIDAD</th><th>DESCRIPCION</th><th>P.UNITARIO</th><th>TOTAL</th></tr>"
+    
+    ' Watermark section with items
+    Print #archivo, "<tr><td colspan='4'>"
+    Print #archivo, "<div class='watermark'>"
+    Print #archivo, "  <div class='watermark-content'>"
+    Print #archivo, "    <div class='watermark-logos'>"
+    Print #archivo, "      <img src='C:\Users\progr\Downloads\CLIENTE 2\LOGO1.jpg' class='watermark-logo' style='width: 200px;'>"
+    Print #archivo, "      <img src='C:\Users\progr\Downloads\CLIENTE 2\LOGO2.jpg' class='watermark-logo' style='width: 200px;'>"
+    Print #archivo, "      <img src='C:\Users\progr\Downloads\CLIENTE 2\LOGO3.jpg' class='watermark-logo' style='width: 200px;'>"
+    Print #archivo, "    </div>"
+    Print #archivo, "  </div>"
+    
+    ' Content table (inside the watermark area)
+    Print #archivo, "  <table style='width: 100%; border: none;'>"
+    
+    ' Recorrer ListView y agregar filas a la tabla
+    For i = 1 To Grilla.ListItems.Count
+        Dim cantidad As Integer
+        Dim descripcion As String
+        Dim precioUnitario As Double
+        Dim totalProducto As Double
+        
+        cantidad = Val(Grilla.ListItems(i).SubItems(1))
+        descripcion = Grilla.ListItems(i).Text
+        precioUnitario = Val(Grilla.ListItems(i).SubItems(2))
+        totalProducto = cantidad * precioUnitario
+        
+        Print #archivo, "<tr><td style='width: 15%; text-align: center;'>" & cantidad & "</td>"
+        Print #archivo, "<td style='width: 45%; text-align: left;'>" & descripcion & "</td>"
+        Print #archivo, "<td style='width: 20%; text-align: right;'>$" & Format(precioUnitario, "#,##0.00") & "</td>"
+        Print #archivo, "<td style='width: 20%; text-align: right;'>$" & Format(totalProducto, "#,##0.00") & "</td></tr>"
+        
+        subtotal = subtotal + totalProducto
+    Next i
+    
+    Print #archivo, "  </table>"
+    Print #archivo, "</div>"
+    Print #archivo, "</td></tr>"
+    Print #archivo, "</table>"
+    
+    ' Calcular IVA y total
+    iva = subtotal * 0.21  ' Suponiendo 21% de IVA
+    total = subtotal + iva
+    
+    ' Totals section
+    Print #archivo, "<div class='totals-section'>"
+    Print #archivo, "  <div class='subtotal-section'>"
+    Print #archivo, "    <div>SUBTOTAL</div>"
+    Print #archivo, "    <div>IVA</div>"
+    Print #archivo, "  </div>"
+    Print #archivo, "  <div class='total-section'>"
+    Print #archivo, "    <div>CONCEPTOS NO GRABADOS</div>"
+    Print #archivo, "    <br><br>"
+    Print #archivo, "    <div style='font-size: 16px; font-weight: bold;'>TOTAL $" & Format(total, "#,##0.00") & "</div>"
+    Print #archivo, "  </div>"
+    Print #archivo, "</div>"
+    
+    ' Footer
+    Print #archivo, "<div class='footer'>"
+    Print #archivo, "  <p>C.A.I. N 2175-19625194739</p>"
+    Print #archivo, "  <p>Fecha de Vencimiento: " & Format(DateAdd("m", 1, Date), "dd/mm/yyyy") & "</p>"
+    Print #archivo, "  <p>REGISTRO PHG3523973</p>"
+    Print #archivo, "</div>"
+    
+    Print #archivo, "</div>" ' End container
+    
+    ' Cerrar HTML
+    Print #archivo, "</body></html>"
+    Close #archivo
+    
+    ' Abrir el comprobante en el navegador
+    Shell "cmd /c start " & ruta, vbNormalFocus
+End Sub
+
+Private Sub precioNeto_LostFocus()
+    Producto.precioNeto = LimpiarValor(precioNeto.Text)
+    precioNeto.Text = FormatoPrecio(Producto.precioNeto)
 End Sub
 
 Private Sub Preciouni_KeyPress(KeyAscii As Integer)
@@ -733,14 +1085,15 @@ Private Sub Preciouni_KeyPress(KeyAscii As Integer)
 End Sub
 
 Private Sub Preciouni_LostFocus()
-    Producto.PrecioUnitario = LimpiarValor(Preciouni.Text)
-    Preciouni.Text = FormatoPrecio(Producto.PrecioUnitario)
+    Producto.precioUnitario = LimpiarValor(Preciouni.Text)
+    Preciouni.Text = FormatoPrecio(Producto.precioUnitario)
+    Producto.cantidad = Val(btnCantidad.Text)
     Call ActualizarPrecio
 End Sub
 
 Private Sub btnCantidad_Change()
     alertaMostrada = False
-    Producto.Cantidad = Val(btnCantidad.Text)
+    Producto.cantidad = Val(btnCantidad.Text)
     Call ActualizarPrecio
 End Sub
 
@@ -750,21 +1103,129 @@ End Sub
 
 Private Sub sumar_Click()
     alertaMostrada = False
-    Producto.Cantidad = Producto.Cantidad + 1
-    btnCantidad.Text = Producto.Cantidad
+    Producto.cantidad = Producto.cantidad + 1
+    btnCantidad.Text = Producto.cantidad
     Call ActualizarPrecio
 End Sub
 
 Private Sub restar_Click()
-    Producto.Cantidad = Producto.Cantidad - 1
-    btnCantidad.Text = Producto.Cantidad
+    Producto.cantidad = Producto.cantidad - 1
+    btnCantidad.Text = Producto.cantidad
     Call ActualizarPrecio
 End Sub
 
 Private Sub ActualizarPrecio()
     precioNeto.Text = FormatoPrecio(Producto.CalcularPrecioNeto())
+    precioNeto_LostFocus
 End Sub
 
 Private Sub txtDescripcion_LostFocus()
-    Producto.Descripcion = txtDescripcion.Text
+    Producto.descripcion = txtDescripcion.Text
 End Sub
+
+Private Sub CargarGrilla()
+    Dim rs As New ADODB.Recordset
+
+    ' Conectar a la base de datos utilizando el módulo de conexión
+    Call ConectarBD
+
+    ' Limpiar el ListView antes de agregar los nuevos datos
+    Grilla.ListItems.Clear
+
+    ' Obtener datos de la base
+    On Error GoTo ErrHandler
+    rs.Open "SELECT id, descripcion, cantidad, precio_unitario, precio_neto FROM PRODUCTOS_VENTAS WHERE FACTURA = " & nroFactura, conn, adOpenStatic, adLockReadOnly
+
+    ' Cargar datos en el ListView
+    If Not rs.EOF Then
+        Do While Not rs.EOF
+            With Grilla.ListItems.Add(, , rs("id"))
+                .SubItems(1) = rs("descripcion")
+                .SubItems(2) = rs("cantidad")
+                .SubItems(3) = "$" & Format(rs("precio_unitario"), "#,##0.00")
+                .SubItems(4) = "$" & Format(rs("precio_neto"), "#,##0.00")
+            End With
+            rs.MoveNext
+        Loop
+    Else
+        MsgBox "No hay productos registrados.", vbExclamation, "Aviso"
+    End If
+
+    ' Cerrar el recordset
+    rs.Close
+    
+    ' Desconectar
+    Call DesconectarBD
+    Exit Sub
+
+ErrHandler:
+    MsgBox "Error al cargar datos: " & Err.Description, vbCritical, "Error"
+    Call DesconectarBD
+End Sub
+Private Sub CalculoGral()
+    Dim rs As New ADODB.Recordset
+
+    ' Conectar a la base de datos utilizando el módulo de conexión
+    Call ConectarBD
+
+    ' Obtener datos de la base
+    On Error GoTo ErrHandler
+    rs.Open "SELECT " & _
+                "SUM(PRECIO_NETO) SUBTOTAL, " & _
+                "SUM(PRECIO_NETO * 0.21) AS IVA, " & _
+                "SUM(PRECIO_NETO) + SUM(PRECIO_NETO * 0.21) AS TOTAL " & _
+                "FROM PRODUCTOS_VENTAS Where factura = " & nroFactura, conn, adOpenStatic, adLockReadOnly
+    
+    txtSubtotal.Text = Format(rs(0), "$0.00")
+    txtIva.Text = Format(rs(1), "$0.00")
+    txtTotal.Text = Format(rs(2), "$0.00")
+    
+    ' Cerrar el recordset
+    rs.Close
+    
+    ' Desconectar
+    Call DesconectarBD
+    Exit Sub
+
+ErrHandler:
+    MsgBox "Error al cargar datos: " & Err.Description, vbCritical, "Error"
+    Call DesconectarBD
+End Sub
+
+' Procedimiento para limpiar los campos
+Private Sub LimpiarCampos()
+    txtDescripcion.Text = ""
+    btnCantidad.Text = 1
+    Preciouni.Text = "$" & Format(0, "#,##0.00")
+    precioNeto.Text = "$" & Format(0, "#,##0.00")
+    Me.Tag = ""  ' Limpiar el ID guardado
+End Sub
+
+Private Sub CargarNumeroFactura()
+    Dim rs As New ADODB.Recordset
+
+    ' Conectar a la base de datos
+    Call ConectarBD
+
+    ' Obtener el último número de factura
+    On Error GoTo ErrHandler
+    rs.Open "SELECT MAX(factura) AS UltimoNro FROM FACTURAS", conn, adOpenStatic, adLockReadOnly
+
+    ' Verificar si hay datos
+    If Not rs.EOF Then
+        nroFactura = rs("UltimoNro")
+        factura.Text = FormatearNumeroFactura(nroFactura)
+    Else
+        MsgBox "No hay facturas registradas.", vbExclamation, "Aviso"
+    End If
+
+    ' Cerrar el recordset y desconectar
+    rs.Close
+    Call DesconectarBD
+    Exit Sub
+
+ErrHandler:
+    MsgBox "Error al obtener el número de factura: " & Err.Description, vbCritical, "Error"
+    Call DesconectarBD
+End Sub
+
