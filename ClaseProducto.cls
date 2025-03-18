@@ -68,4 +68,3 @@ Public Function CalcularPrecioNeto() As Double
     
     CalcularPrecioNeto = mPrecioUnitario * mCantidad
 End Function
-

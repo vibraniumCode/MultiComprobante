@@ -21,7 +21,6 @@ Form=Facturacion.frm
 Module=ModuloUtilidades; ModuloUtilidades.bas
 Class=ClaseProducto; ClaseProducto.cls
 Module=modConexion; modConexion.bas
-Designer=RptArturo.Dsr
 Startup="Facturacion"
 HelpFile=""
 Command32=""
