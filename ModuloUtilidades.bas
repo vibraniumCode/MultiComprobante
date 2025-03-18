@@ -26,5 +26,5 @@ Public Sub MostrarAlerta(ByVal mensaje As String)
 End Sub
 
 Public Function FormatearNumeroFactura(ByVal numero As Long) As String
-    FormatearNumeroFactura = Format(numero, "00000000000000000000000000000000000")
+    FormatearNumeroFactura = Format(numero, "00000000")
 End Function
