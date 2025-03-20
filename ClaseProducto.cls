@@ -19,11 +19,11 @@ Private mCantidad As Integer
 Private mDescripcion As String
 
 ' Propiedad para el precio unitario
-Public Property Get PrecioNeto() As Double
-    PrecioNeto = mPrecioNeto
+Public Property Get precioNeto() As Double
+    precioNeto = mPrecioNeto
 End Property
 
-Public Property Let PrecioNeto(ByVal Valor As Double)
+Public Property Let precioNeto(ByVal Valor As Double)
     mPrecioNeto = Valor
 End Property
 

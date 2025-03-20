@@ -1,219 +1,405 @@
-<html><head><title>Factura</title></head><body>
-<style>
-body { font-family: Arial, sans-serif; width: 800px; margin: auto; }
-.container { border: 1px solid #000; padding: 0; }
-.header { display: flex; border-bottom: 1px solid #000; position: relative; }
-.logo-section { width: 50%; padding: 10px; }
-.logo { width: 350px; display: block; }
-.company-info { font-size: 12px; margin: 0; }
-.company-space { margin-bottom: 15px; }
-.company-margin { margin: 0 50px;}	
-.company-name { font-weight: bold; }
-.email { color: blue; }
-.letter-box {  width: 7%; display: flex; flex-direction: column; height: 100%; /* Añadir posición relativa */ }
-.vertical-blue-line {
-  position: absolute;
-  top: 48%;
-  left: 50%;
-  width: 1px;
-  height: 111px;
-  background-color: black;
-  /* Asegurarse que los colores se impriman */
-  print-color-adjust: exact;
-  -webkit-print-color-adjust: exact;
-}
-.letter { font-size: 36px; 
-  text-align: center;
-  height: 100%; /* Ocupa todo el alto disponible */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;}
-.letter-border { 
-  border-left: 1px solid #000;
-  border-right: 1px solid #000;
-  border-bottom: 1px solid #000;
-  height: 100%; /* Ocupa todo el alto disponible */
-  display: flex;
-  align-items: center; /* Centra el contenido verticalmente */
-  justify-content: center; /* Centra el contenido horizontalmente */
-  min-height: 80px; /* Establece una altura mínima */
-  padding: 10px 0; /* Añade espacio arriba y abajo */}	
-.factura-section { width: 50%; padding: 10px; display: flex; flex-direction: column; }
-.factura-label { font-size: 14px; text-align: left; margin-bottom: 10px; }
-.factura-num { font-size: 23px; margin-bottom: 20px; }
-.factura-num-dos {margin-right: 6px;}
-.factura-num-font {font-size: 28px; font-family: "Courier New", monospace; color: gray}
-.factura-info { text-align: left; margin-top: 35px;}
-.vertical-line { position: absolute; top: 70px; left: 76%; width: 1px; height: calc(100% - 70px); background-color: #000; }
-.items-table { width: 100%; border-collapse: collapse; }
-.items-table th, .items-table td {
-  width: 25%;
-  padding: 5px;
-  text-align: center;
-  font-size: 12px;
-}
-.watermark { position: relative; height: 400px; }
-.watermark-content { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; opacity: 0.1; }
-.watermark-logos { display: flex; justify-content: center; }
-.watermark-logo { margin: 0 20px; }
-.totals-section { 
-  display: flex;
-  margin-bottom: 10px;
-}
-.totals-section-border {
-  position: relative;
-  height: 10px; /* Altura del espacio que contiene el borde */
-  margin: 0 auto;
-  width: 94%;
-  border-top: 1px dashed #000;
-}
-.totals-section-border::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 10%; /* Ajusta este valor para controlar dónde comienza el borde */
-  width: 95%; /* Ajusta este valor para controlar el ancho del borde */
-  height: 1px;
-  background-color: transparent; /* Elimina el fondo sólido */
-}
-.subtotal-section { 
-  width: 40%; 
-  padding: 10px; 
-  font-size: 12px; 
-}
-
-.total-section { 
-  width: 60%; 
-  padding: 10px; 
-  text-align: right; 
-  font-size: 14px; 
-}
-.footer {padding: 0 10px; font-size: 10px; text-align: left; margin: 15px 0;}
-.footer p { margin: 0; }
-
-@media print {
-  /* Reglas más específicas para ocultar elementos no deseados */
-  .no-print, .no-print * {
-    display: none !important;
-    visibility: hidden !important;
-  }
-  .vertical-blue-line {
-    position: absolute;
-    top: 49.5%;
-    left: 50%;
-    width: 1px;
-    height: 103px;
-    background-color: black;
-    /* Asegurarse que los colores se impriman */
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-}
-  /* Ocultar encabezados y pies de página del navegador */
-  @page {
-    margin: 0.5cm;
-    size: auto;
-  }
-  
-  /* Oculta la barra de herramientas y direcciones de URL */
-  html {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  
-  /* Oculta los elementos fuera del contenedor principal */
-  body > *:not(.container) {
-    display: none !important;
-  }
-  
-  /* Oculta elementos específicos que podrían estar causando problemas */
-  .header-date, .print-timestamp, .browser-info {
-    display: none !important;
-  }
-}
-</style>
-<div class='container'>
-<div class='header'>
-  <div class='logo-section'>
-    <button onclick="window.print()" class="no-print">Imprimir</button>
-    <img src='C:\Users\mlopez\Desktop\mlopez\CLIENTE 2/LOGO1.jpg' class='logo'>
-    <div class="company-margin">
-      <p class='company-info company-name'>NEUMATICOS ARTURO S.R.L.</p>
-      <p class='company-info'>AV. SAN MARTIN 1695 - 1678 CASEROS</p>
-      <p class='company-info'>TEL.: (011) 4734 - 8476</p>
-      <p class='company-info email'>ventas@neumaticosarturo.com.ar</p>
-      <p class='company-info'>I.V.A.: Responsable Inscripto</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Factura Federal Parts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            width: 800px;
+            margin: auto;
+            background-color: #a9dff9; /* Light blue background */
+        }
+        .container {
+            padding: 0;
+            background-color: #a9dff9;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .logo-section {
+            display: flex;
+            width: 45%;
+        }
+        .logo-fp {
+            display: flex;
+            flex-direction: column;
+            margin-left: 10px;
+        }
+        .fp-text {
+            color: #FF0000; /* Red color for Federal Parts text */
+            letter-spacing: 3px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 23px;
+            font-weight: 800;
+            margin: 0;
+            
+        }
+        .repuestos-text {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .phone-numbers {
+            font-size: 14px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        .blue-square {
+            width: 80px;
+            height: 80px;
+            background-color: #000080; /* Navy blue */
+            margin-right: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .fp-logo {
+            color: #FF0000;
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .company-box {
+            border: 1px solid #000;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: white;
+            width: 45%;
+        }
+        .invoice-box {
+            border: 1px solid #000;
+            padding: 10px;
+            background-color: white;
+            width: 45%;
+            margin-top: 10px;
+        }
+        .original-copy {
+            text-align: center;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        .factura-text {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .factura-num {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+        }
+        .date-section {
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        .side-logos {
+            display: flex;
+            flex-direction: column;
+            margin-left: 20px;
+        }
+        .side-logo {
+            width: 100px;
+            height: 70px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .bosch-logo {
+            background-color: #FF0000;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .stanadyne-logo {
+            background-color: #000080;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .delphi-logo {
+            background-color: #FF0000;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+        }
+        .denso-logo {
+            background-color: #FF0000;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .client-section {
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 10px 20px;
+            background-color: white;
+            display: flex;
+            min-height: 80px;
+        }
+        .items-table {
+            width: calc(100% - 40px);
+            margin: 0 20px;
+            border-collapse: collapse;
+            background-color: white;
+        }
+        .items-table th {
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: center;
+            background-color: white;
+        }
+        .items-table td {
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: center;
+        }
+        .totals-section {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 20px;
+            font-size: 12px;
+        }
+        .subtotal-section {
+            display: flex;
+            gap: 30px;
+        }
+        .total-amount {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .footer-section {
+            margin: 20px;
+            border-top: 1px dashed #000;
+            padding-top: 10px;
+            font-size: 12px;
+        }
+        .footer-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .consumer-protection {
+            font-size: 14px;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+                <img src='C:\Users\mlopez\Desktop\mlopez\CLIENTE 2/LOGO4.jpg' style=" width: 70px; height: 100px; display: block; ">
+                <div class="logo-fp">
+                    <p class="fp-text">Federal Parts</p>
+                    <p class="repuestos-text">REPUESTOS AUTOMOTOR</p>
+                    <div class="phone-numbers">
+                        <p style="margin: 0;">011-5713-7182</p>
+                        <p style="margin: 0;">011-4541-1361</p>
+                        <p style="margin: 0;">011-4541-2845</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="original-copy">ORIGINAL BLANCO / COPIA COLOR</div>
+                <div class="invoice-box">
+                    <div class="factura-text">Factura</div>
+                    <div class="factura-num">N°0001-00019478</div>
+                    <div class="date-section">
+                        <p style="margin: 2px 0;">Fecha: 11/09/2020</p>
+                        <p style="margin: 2px 0;">C.U.I.T.: 30715978735</p>
+                        <p style="margin: 2px 0;">Ingresos Brutos: 1547261-2</p>
+                        <p style="margin: 2px 0;">Inicio de Actividades: 01/03/2018</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="display: flex;">
+            <div class="side-logos">
+                <div class="side-logo bosch-logo">BOSCH</div>
+                <div class="side-logo stanadyne-logo">STANADYNE</div>
+                <div class="side-logo delphi-logo">DELPHI</div>
+                <div class="side-logo denso-logo">DENSO</div>
+            </div>
+            <div style="width: 85%;">
+                <div class="company-box">
+                    <p style="margin: 2px 0;">FEDERAL PARTS S.R.L.</p>
+                    <p style="margin: 2px 0;">JARAMILLO 3060 (1430)</p>
+                    <p style="margin: 2px 0;">CIUDAD AUTONOMA DE BS. AS.</p>
+                    <p style="margin: 2px 0;">IVA RESPONSABLE INSCRIPTO</p>
+                </div>
+                <div class="client-section">
+                    <!-- Client information would go here -->
+                </div>
+            </div>
+        </div>
+        
+        <table class="items-table">
+            <tr>
+                <th>CANTIDAD</th>
+                <th>DESCRIPCION</th>
+                <th>PRECIO UNITARIO</th>
+                <th>PRECIO NETO</th>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td style="text-align: left;">BULONES PERFORADOS 6mm</td>
+                <td>100,00</td>
+                <td>1.000,00</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td style="text-align: left;">BULONES PERFORADOS 10X1,25</td>
+                <td>140,00</td>
+                <td>840,00</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td style="text-align: left;">BULONES PE2F 20X1,50X48mm</td>
+                <td>155,00</td>
+                <td>1.860,00</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td style="text-align: left;">BULONES PE2F DOBLE 10mm</td>
+                <td>145,00</td>
+                <td>1.450,00</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td style="text-align: left;">BOMBAS ALIMENTADORAS 0440011007</td>
+                <td>5.250,00</td>
+                <td>10.500,00</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td style="text-align: left;">BOMBAS ALIMENTADORAS 0440011011</td>
+                <td>4.840,00</td>
+                <td>9.680,00</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td style="text-align: left;">BOMBA ALIMENTADORA 0440011002</td>
+                <td>4.790,00</td>
+                <td>4.790,00</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td style="text-align: left;">BOMBAS ALIMENTADORAS 0440011021</td>
+                <td>4.920,00</td>
+                <td>9.840,00</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td style="text-align: left;">BOMBAS ALIMENTADORAS 0440003176</td>
+                <td>2.920,00</td>
+                <td>5.840,00</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td style="text-align: left;">BOMBA ALIMENTADORA BA130/33C</td>
+                <td>2.800,00</td>
+                <td>2.800,00</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td style="text-align: left;">BOMBA ALIMENTADORA BA130/33A</td>
+                <td>2.780,00</td>
+                <td>2.780,00</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td style="text-align: left;">CERADORES DE MANO 2447022099</td>
+                <td>580,00</td>
+                <td>5.800,00</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td style="text-align: left;">CERADORES DE MANO 10X10 CM133/10</td>
+                <td>510,00</td>
+                <td>10.200,00</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td style="text-align: left;">FILTROS COMBUSTIBLE COMPLETOS PERKINS</td>
+                <td>2.300,00</td>
+                <td>4.600,00</td>
+            </tr>
+        </table>
+        
+        <div style="display: flex; justify-content: space-between; margin: 10px 20px;">
+            <div style="width: 50%; display: flex; align-items: center;">
+                <img src="/api/placeholder/250/100" alt="Federal Parts Logo" style="width: 250px;">
+            </div>
+            <div style="width: 50%; text-align: right;">
+                <div class="totals-section">
+                    <div class="subtotal-section">
+                        <div>
+                            <div>SUBTOTAL</div>
+                            <div>82.460,00</div>
+                        </div>
+                        <div>
+                            <div>ALICUOTA IVA</div>
+                            <div>(21,00)</div>
+                        </div>
+                        <div>
+                            <div>IVA</div>
+                            <div>17.316,60</div>
+                        </div>
+                        <div>
+                            <div>RECEP. IVA</div>
+                            <div></div>
+                        </div>
+                        <div>
+                            <div>RECEP. OTROS</div>
+                            <div></div>
+                        </div>
+                        <div>
+                            <div>CONCEPTOS NO GRAVADOS</div>
+                            <div>0,00</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; font-weight: bold; font-size: 18px; text-align: right;">
+                    TOTAL $ 99.776,60
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-section">
+            <div>Recibí(mos):</div>
+            <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                <div>IMPORTE PAGADO</div>
+                <div>0,00</div>
+            </div>
+            <div style="border-top: 1px dashed #000; margin: 10px 0; padding-top: 10px;">
+                <div>Transporte: RETIRA CLIENTE</div>
+                <div style="margin-top: 10px; text-align: center;">((( FLETES A CARGO DEL CLIENTE ))) 00000000 (70010045)</div>
+            </div>
+            <div style="margin-top: 10px;">
+                <div>C.A.I. N° 0765-38126509472</div>
+                <div>Fecha de Vencimiento: 11/09/2020</div>
+                <div style="display: flex; justify-content: space-between;">
+                    <div>CF</div>
+                    <div>HHG1614169</div>
+                </div>
+                <div>DGI</div>
+            </div>
+        </div>
+        
+        <div class="consumer-protection">
+            147: Teléfono Gratuito C.A.B.A., Area de Defensa y Protección al Consumidor
+        </div>
+        
+        <div style="font-size: 10px; text-align: left; margin: 5px 20px;">
+            IMPRENTA ROZA TEL/FAX: 4961-2787/4953-7122
+        </div>
     </div>
-  </div>
-  <div class='letter-box'>
-    <div class='flex letter'>
-      <div class="letter-border">
-          A
-      </div>
-      <div class="vertical-blue-line"></div>
-    </div>
-  </div>
-  <div class='factura-section'>
-    <div class='factura-label'>FACTURA</div>
-    <div class='factura-num'><span class="factura-num-dos">N°0001-</span> <span class="factura-num-font">00000003</div></span>
-    <div class='factura-info'>
-      <p class='company-info company-space'>FECHA: 17/03/2025</p>
-      <p class='company-info'>C.U.I.T.: 33-71457404-9</p>
-      <p class='company-info'>ING. BRUTOS: 33-71457404-9</p>
-      <p class='company-info'>INICIO DE ACTIVIDADES: 08/2014</p>
-    </div>
-  </div>
-</div>
-<div style="border-bottom: 1px solid #000; height: 60px;"></div>
-<table class='items-table'>
-  <tr>
-    <th style="border-bottom: none; width: 25%; text-align: center; color: gray;">CANTIDAD</th>
-    <th style="border-bottom: none; width: 25%; text-align: center; color: gray;">DESCRIPCION</th>
-    <th style="border-bottom: none; width: 25%; text-align: center; color: gray;">P.UNITARIO</th>
-    <th style="border-bottom: none; width: 25%; text-align: center; color: gray;">TOTAL</th>
-  </tr>
-<tr><td colspan='4'>
-<div class='watermark'>
-  <div class='watermark-content'>
-    <div class='watermark-logos'>
-      <img src='C:\Users\mlopez\Desktop\mlopez\CLIENTE 2\LOGO3.jpg' class='watermark-logo' style='width: 300px;'>
-      <img src='C:\Users\mlopez\Desktop\mlopez\CLIENTE 2\LOGO2.jpg' class='watermark-logo' style='width: 300px;'>
-    </div>
-  </div>
-  <table style='width: 100%; border: none;'>
-    <tr>
-      <td style='width: 25%; text-align: center;'>21</td>
-      <td style='width: 25%; text-align: center;'>NEUMATICO 2.0 STR</td>
-      <td style='width: 25%; text-align: center;'>$3,00</td>
-      <td style='width: 25%; text-align: center;'>$0,00</td>
-    </tr>
-    <tr>
-      <td style='width: 25%; text-align: center;'>21</td>
-      <td style='width: 25%; text-align: center;'>NEUMATICO 2.0 STR</td>
-      <td style='width: 25%; text-align: center;'>$2,00</td>
-      <td style='width: 25%; text-align: center;'>$0,00</td>
-    </tr>
-  </table>
-</div>
-</td></tr>
-</table>
-<div style="display: flex;">
-  <div class='subtotal-section'>
-    <div style="display: flex;">
-    <div style="margin-right: 80px;">SUBTOTAL</div>
-    <div>IVA</div>
-  </div>
-  </div>
-  <div class='total-section'>
-    <div>CONCEPTOS NO GRABADOS</div>
-    <br><br>
-    <div style='font-size: 16px; font-weight: bold; text-align: left; padding-left: 50%;'>TOTAL $</div>
-  </div>
-</div>
-<div class='totals-section-border'></div>
-<div class='footer'>
-  <p>C.A.I. N 2175-19625194739</p>
-  <p>Fecha de Vencimiento: 17/04/2025</p>
-  <p style="margin-left: 20px;">REGISTRO PHG3523973</p>
-</div>
-</div>
-</body></html>
+</body>
+</html>
