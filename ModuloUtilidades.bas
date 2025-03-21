@@ -175,7 +175,7 @@ Public Function GenerarComprobante(ByVal subTotal As Double, iva As Integer, tot
     Print #archivo, "  </div>"
     Print #archivo, "  <div class='factura-section'>"
     Print #archivo, "    <div class='factura-label'>FACTURA</div>"
-    Print #archivo, "    <div class='factura-num'><span class='factura-num-dos'>N°0001- " & "</span> <span class='factura-num-Font'>" & nroFactura & "</span></div>"
+    Print #archivo, "    <div class='factura-num'><span class='factura-num-dos'>N°0001- " & "</span> <span class='factura-num-Font'>" & Format(nroFactura, "00000000") & "</span></div>"
     Print #archivo, "    <div class='factura-info'>"
     Print #archivo, "      <p class='company-info company-space'>FECHA: 17/03/2025</p>"
     Print #archivo, "      <p class='company-info'>C.U.I.T.: 33-71457404-9</p>"
