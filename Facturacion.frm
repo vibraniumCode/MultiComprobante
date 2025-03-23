@@ -935,52 +935,11 @@ Private Sub Grilla_MouseUp(Button As Integer, Shift As Integer, X As Single, Y A
 End Sub
 
 Private Sub ImpArturo_Click()
-    Dim rs As New ADODB.Recordset
-    
-    On Error GoTo ManejadorErrores
-    
-    ' Conectar a la base de datos utilizando el módulo de conexión
-    Call ConectarBD
-    
-    ' Verificar que la conexión esté abierta
-    If conn.State = adStateClosed Then
-        MsgBox "Error: La conexión a la base de datos no se estableció correctamente.", vbCritical, "Error de conexión"
-        GoTo Finalizar
-    End If
-    
-    ' Obtener datos de la base
-    rs.Open "SELECT cantidad, descripcion, precio_unitario, precio_neto AS total FROM PRODUCTOS_VENTAS", conn, adOpenStatic, adLockReadOnly
-    
-    ' Cargar datos en el reporte
-    If rs.State = adStateOpen And Not rs.EOF Then
-        With RptArturo
-            Set .DataSource = rs
-            .Refresh    ' Añadido para asegurar que el reporte se actualiza
-            .Show
-        End With
-    Else
-        MsgBox "No se pudieron cargar los datos. Verifique la consulta o la conexión.", vbExclamation, "Aviso"
-    End If
-    
-    GoTo Finalizar
-    
-ManejadorErrores:
-    MsgBox "Error " & Err.Number & ": " & Err.Description, vbCritical, "Error en reporte"
-    
-Finalizar:
-    ' Cerrar el recordset si está abierto
-    If Not rs Is Nothing Then
-        If rs.State = adStateOpen Then rs.Close
-        Set rs = Nothing
-    End If
-    
-    ' Desconectar
-    Call DesconectarBD
-    Exit Sub
+    GenerarComprobante txtSubtotal.Text, txtIva.Text, txtTotal.Text, Facturacion
 End Sub
 
 Private Sub ImpFederal_Click()
- GenerarComprobante txtSubtotal.Text, txtIva.Text, txtTotal.Text, Facturacion
+ GenerarComprobante2 txtSubtotal.Text, txtIva.Text, txtTotal.Text, Facturacion
 End Sub
 
 Private Sub precioNeto_LostFocus()
