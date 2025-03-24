@@ -545,9 +545,9 @@ Public Function GenerarComprobante2(ByVal subTotal As Double, iva As Integer, to
     Print #archivo, "                <div class='original-Copy'>ORIGINAL BLANCO / COPIA COLOR</div>"
     Print #archivo, "                <div class='invoice-box'>"
     Print #archivo, "                    <div class='factura-Text'>Factura</div>"
-    Print #archivo, "                    <div class='factura-num'>N°0001-00019478</div>"
+    Print #archivo, "                    <div class='factura-num'>N°0001- <span>" & Format(nroFactura, "00000000") & "</span></div>"
     Print #archivo, "                </div>"
-    Print #archivo, "                <div class=invoice-box'>"
+    Print #archivo, "                <div class='invoice-box'>"
     Print #archivo, "                    <div class='Date-Section'>"
     Print #archivo, "                        <p style='margin: 2px 0;'>Fecha: 11/09/2020</p>"
     Print #archivo, "                        <p style='margin: 2px 0;'>C.U.I.T.: 30715978735</p>"
@@ -575,36 +575,27 @@ Public Function GenerarComprobante2(ByVal subTotal As Double, iva As Integer, to
     Print #archivo, "                                <th>PRECIO UNITARIO</th>"
     Print #archivo, "                                <th>PRECIO NETO</th>"
     Print #archivo, "                            </tr>"
-    Print #archivo, "                            <tr>"
-    Print #archivo, "                                <td>10</td>"
-    Print #archivo, "                                <td style='text-align: left;'>BULONES PERFORADOS 6mm</td>"
-    Print #archivo, "                                <td>100,00</td>"
-    Print #archivo, "                                <td>1.000,00</td>"
-    Print #archivo, "                            </tr>"
-    Print #archivo, "                            <tr>"
-    Print #archivo, "                                <td>6</td>"
-    Print #archivo, "                                <td style='text-align: left;'>BULONES PERFORADOS 10X1,25</td>"
-    Print #archivo, "                                <td>140,00</td>"
-    Print #archivo, "                                <td>840,00</td>"
-    Print #archivo, "                            </tr>"
-    Print #archivo, "                            <tr>"
-    Print #archivo, "                                <td>12</td>"
-    Print #archivo, "                                <td style='text-align: left;'>BULONES PE2F 20X1,50X48mm</td>"
-    Print #archivo, "                                <td>155,00</td>"
-    Print #archivo, "                                <td>1.860,00</td>"
-    Print #archivo, "                            </tr>"
-    Print #archivo, "                            <tr>"
-    Print #archivo, "                                <td>10</td>"
-    Print #archivo, "                                <td style='text-align: left;'>BULONES PE2F DOBLE 10mm</td>"
-    Print #archivo, "                                <td>145,00</td>"
-    Print #archivo, "                                <td>1.450,00</td>"
-    Print #archivo, "                            </tr>"
-    Print #archivo, "                            <tr>"
-    Print #archivo, "                                <td>2</td>"
-    Print #archivo, "                                <td style='text-align: left;'>BOMBAS ALIMENTADORAS 0440011007</td>"
-    Print #archivo, "                                <td>5.250,00</td>"
-    Print #archivo, "                                <td>10.500,00</td>"
-    Print #archivo, "                            </tr>"
+' Recorrer ListView y agregar filas a la tabla
+    With formulario
+    For i = 1 To .Grilla.ListItems.Count
+        Dim Cantidad As Integer
+        Dim Descripcion As String
+        Dim PrecioUnitario As Double
+        Dim totalProducto As Double
+
+        Cantidad = .Grilla.ListItems(i).SubItems(2)
+        Descripcion = .Grilla.ListItems(i).SubItems(1)
+        PrecioUnitario = .Grilla.ListItems(i).SubItems(3)
+        totalProducto = .Grilla.ListItems(i).SubItems(4)
+
+        Print #archivo, "<tr><td style='width: 15%; text-align: center'>" & Cantidad & "</td>"
+        Print #archivo, "<td style='width: 40%; text-align: left; text-transform: uppercase'>" & Descripcion & "</td>"
+        Print #archivo, "<td style='width: 25%; text-align: center'>" & Format(PrecioUnitario, "#,##0.00") & "</td>"
+        Print #archivo, "<td style='width: 25%; text-align: center'>" & Format(totalProducto, "#,##0.00") & "</td></tr>"
+
+'        subTotal = subTotal + totalProducto
+    Next i
+    End With
     Print #archivo, "                        </table>"
     Print #archivo, "                        <div style='padding-top: 10px; text-align: center; background-color: white; border-left: 1px solid black; border-right: 1px solid black;'>"
     Print #archivo, "                            <p class='fp-Text'>Federal Parts</p>"
@@ -620,9 +611,9 @@ Public Function GenerarComprobante2(ByVal subTotal As Double, iva As Integer, to
     Print #archivo, "                                    <div style='width: 180px; flex-shrink: 0;'>CONCEPTOS NO GRAVADOS</div>"
     Print #archivo, "                                </div>"
     Print #archivo, "                                <div style='display: flex; margin-top: 5px;'>"
-    Print #archivo, "                                    <div style='margin-right: 54px;'>$10,000.00</div>"
+    Print #archivo, "                                    <div style='margin-right: 54px;'>" & Format$(subTotal, "#,##0.00") & "</div>"
     Print #archivo, "                                    <div style='margin-right: 98px;'>(21.00)</div>"
-    Print #archivo, "                                    <div style='margin-right: 320px;'>$2,100.00</div>"
+    Print #archivo, "                                    <div style='margin-right: 320px;'>" & Format$(iva, "#,##0.00") & "</div>"
     Print #archivo, "                                    <div>00.00</div>"
     Print #archivo, "                                </div>"
     Print #archivo, "                            </div>"
@@ -630,7 +621,7 @@ Public Function GenerarComprobante2(ByVal subTotal As Double, iva As Integer, to
     Print #archivo, "                        <div style='padding: 10px; text-align: -webkit-right; background-color: white; border-left: 1px solid black; border-right: 1px solid black;'>"
     Print #archivo, "                            <div style='width: 50%; text-align: right;'>"
     Print #archivo, "                                <div style='margin-top: 10px; font-weight: bold; font-size: 18px; text-align: right;'>"
-    Print #archivo, "                                    <span style='margin-right: 10rem;'>TOTAL $</span> 99.776,60"
+    Print #archivo, "                                    <span style='margin-right: 10rem;'>TOTAL $</span>" & Format$(total, "#,##0.00")
     Print #archivo, "                                </div>"
     Print #archivo, "                            </div>"
     Print #archivo, "                        </div>"
