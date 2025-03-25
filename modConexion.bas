@@ -5,12 +5,35 @@ Option Explicit
 Public conn As New ADODB.Connection
 
 Public Sub ConectarBD()
-    ' Cadena de conexión
+    
+    Dim rutaIni As String
     Dim strConn As String
-    strConn = "Provider=SQLOLEDB;Data Source=facturacion_neumaticos.mssql.somee.com;" & _
-              "Initial Catalog=facturacion_neumaticos;User ID=mlopez_cliente_2_SQLLogin_2;" & _
-              "Password=khuwpknwob;Persist Security Info=False;" & _
+    
+    ' Obtener ruta del archivo INI (en el mismo directorio que la aplicación)
+    rutaIni = App.Path & "\login.ini"
+    
+    ' Leer configuración
+    Dim Provider As String
+    Dim DataSource As String
+    Dim InitialCatalog As String
+    Dim UserID As String
+    Dim Password As String
+    
+    Provider = LeerIni("DatabaseConfig", "Provider", rutaIni)
+    DataSource = LeerIni("DatabaseConfig", "DataSource", rutaIni)
+    InitialCatalog = LeerIni("DatabaseConfig", "InitialCatalog", rutaIni)
+    UserID = LeerIni("DatabaseConfig", "UserID", rutaIni)
+    Password = LeerIni("DatabaseConfig", "Password", rutaIni)
+    
+    ' Armar cadena de conexión
+    strConn = "Provider=" & Provider & ";" & _
+              "Data Source=" & DataSource & ";" & _
+              "Initial Catalog=" & InitialCatalog & ";" & _
+              "User ID=" & UserID & ";" & _
+              "Password=" & Password & ";" & _
+              "Persist Security Info=False;" & _
               "TrustServerCertificate=True"
+    
 
     ' Abrir conexión
     On Error GoTo ErrHandler

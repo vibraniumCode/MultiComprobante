@@ -604,7 +604,7 @@ Begin VB.Form Facturacion
          Left            =   1800
          TabIndex        =   2
          Top             =   240
-         Width           =   1335
+         Width           =   2895
       End
       Begin VB.Label fecha 
          AutoSize        =   -1  'True
@@ -658,10 +658,10 @@ Begin VB.Form Facturacion
          Width           =   1695
       End
       Begin VB.Line Line1 
-         X1              =   3120
+         X1              =   4680
          X2              =   13200
-         Y1              =   400
-         Y2              =   400
+         Y1              =   405
+         Y2              =   405
       End
       Begin VB.Label Label2 
          Caption         =   "FACTURA:"
@@ -807,6 +807,26 @@ Private Sub Command1_Click()
 
 End Sub
 
+Private Sub btnFinalizar_Click()
+
+If Grilla.ListItems.Count > 0 Then
+    Call ConectarBD
+    On Error GoTo ErrHandler
+    conn.Execute "INSERT INTO FACTURAS SELECT 'A'"
+    MsgBox "Proceso finalizado", vbInformation
+    Call DesconectarBD
+    CargarNumeroFactura
+    Exit Sub
+Else
+    MostrarAlerta "No se puede finalizar si aun no ingresaste productos"
+    Exit Sub
+End If
+
+ErrHandler:
+    MsgBox "Error al eliminar el producto: " & Err.Description, vbCritical, "Error"
+    Call DesconectarBD
+End Sub
+
 Private Sub Eliminar_Click()
     Dim idProducto As Long
     
@@ -886,9 +906,9 @@ End Sub
 
 Private Sub btnIngresarproducto_Click()
 Dim cmd As New ADODB.Command
-Dim facturaNumero As Double
+'Dim facturaNumero As Double
 
-facturaNumero = Val(factura.Text)
+'facturaNumero = Val(factura.Text)
 If Not IsNumeric(Producto.Cantidad) Or Not IsNumeric(Producto.PrecioUnitario) Then
     MsgBox "La cantidad y el precio deben ser números válidos.", vbCritical, "Error"
     Exit Sub
@@ -918,7 +938,7 @@ End If
         .Parameters.Append .CreateParameter("CANTIDAD", adInteger, adParamInput, , Producto.Cantidad)
         .Parameters.Append .CreateParameter("PRECIO_UNITARIO", adDouble, adParamInput, , Producto.PrecioUnitario)
         .Parameters.Append .CreateParameter("PRECIO_NETO", adDouble, adParamInput, , Producto.precioNeto)
-        .Parameters.Append .CreateParameter("FACTURA", adDouble, adParamInput, , facturaNumero)
+        .Parameters.Append .CreateParameter("FACTURA", adDouble, adParamInput, , nroFactura)
         .Execute
     End With
 
@@ -1039,7 +1059,7 @@ Private Sub CargarGrilla()
     Else
         MsgBox "No hay productos registrados.", vbExclamation, "Aviso"
     End If
-
+    Grilla.ColumnHeaders(1).Width = 0
     ' Cerrar el recordset
     rs.Close
     
@@ -1103,7 +1123,7 @@ Private Sub CargarNumeroFactura()
     ' Verificar si hay datos
     If Not rs.EOF Then
         nroFactura = rs("UltimoNro")
-        factura.Text = FormatearNumeroFactura(nroFactura)
+        factura.Text = "N°0001-" & FormatearNumeroFactura(nroFactura)
     Else
         MsgBox "No hay facturas registradas.", vbExclamation, "Aviso"
     End If

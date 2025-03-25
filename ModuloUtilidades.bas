@@ -155,7 +155,6 @@ Public Function GenerarComprobante(ByVal subTotal As Double, iva As Integer, tot
     Print #archivo, "<div class='container'>"
     Print #archivo, "<div class='header'>"
     Print #archivo, "  <div class='logo-section'>"
-    Print #archivo, "    <button onclick='window.print()' class='no-print'>Imprimir</button>"
     Print #archivo, "    <img src='C:\Users\mlopez\Desktop\mlopez\CLIENTE 2/LOGO1.jpg' class='logo'>"
     Print #archivo, "    <div class='company-margin'>"
     Print #archivo, "      <p class='company-info company-name'>NEUMATICOS ARTURO S.R.L.</p>"
