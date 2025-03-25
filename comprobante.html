@@ -231,6 +231,9 @@
             font-size: 14px; 
         }
         @media print {
+            .invoice-page {
+                page-break-inside: avoid;
+            }
             /* Reglas más específicas para ocultar elementos no deseados */
             .no-print, .no-print * {
                 display: none !important;
@@ -264,7 +267,9 @@
             body > *:not(.container) {
                 display: none !important;
             }
-            
+            .invoice-page {
+                page-break-inside: avoid;
+            }
             /* Oculta elementos específicos que podrían estar causando problemas */
             .header-date, .print-timestamp, .browser-info {
                 display: none !important;
@@ -273,7 +278,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="invoice-container">
         <div class="header">
             <button onclick="window.print()" class="no-print">Imprimir</button>
             <div class="logo-section">
@@ -561,4 +566,69 @@
         </div>
     </div>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const MAX_PRODUCTS_PER_PAGE = 10; // Adjust this based on your page's capacity
+        const originalInvoice = document.querySelector('.container');
+        const invoiceContainer = document.getElementById('invoice-container');
+        const itemsTable = originalInvoice.querySelector('.items-table');
+        const itemRows = itemsTable.querySelectorAll('tr:not(:first-child)');
+
+        function createInvoicePage(pageNumber, startIndex, endIndex) {
+            const clonedInvoice = originalInvoice.cloneNode(true);
+            const clonedItemsTable = clonedInvoice.querySelector('.items-table');
+            
+            // Clear existing rows
+            while (clonedItemsTable.rows.length > 1) {
+                clonedItemsTable.deleteRow(1);
+            }
+
+            // Copy header row
+            const headerRow = itemsTable.rows[0].cloneNode(true);
+            clonedItemsTable.appendChild(headerRow);
+
+            // Add selected product rows
+            for (let i = startIndex; i <= endIndex; i++) {
+                const row = itemRows[i].cloneNode(true);
+                clonedItemsTable.appendChild(row);
+            }
+
+            // Modify page indicators
+            const originalCopy = clonedInvoice.querySelector('.original-copy');
+            originalCopy.textContent = `ORIGINAL BLANCO / COPIA COLOR - Página ${pageNumber}`;
+
+            const invoiceNumberEl = clonedInvoice.querySelector('.factura-num');
+            invoiceNumberEl.textContent += `-${pageNumber}`;
+
+            // Add page break class for print
+            clonedInvoice.classList.add('invoice-page');
+            if (pageNumber > 1) {
+                const pageBreak = document.createElement('div');
+                pageBreak.classList.add('page-break');
+                invoiceContainer.appendChild(pageBreak);
+            }
+
+            invoiceContainer.appendChild(clonedInvoice);
+        }
+
+        function splitInvoice() {
+            const totalProducts = itemRows.length;
+            let pageNumber = 1;
+
+            for (let i = 0; i < totalProducts; i += MAX_PRODUCTS_PER_PAGE) {
+                const startIndex = i;
+                const endIndex = Math.min(i + MAX_PRODUCTS_PER_PAGE - 1, totalProducts - 1);
+                
+                createInvoicePage(pageNumber, startIndex, endIndex);
+                pageNumber++;
+            }
+
+            // Remove the original invoice
+            originalInvoice.remove();
+        }
+
+        // Call split invoice function
+        splitInvoice();
+    });
+</script>
 </html>

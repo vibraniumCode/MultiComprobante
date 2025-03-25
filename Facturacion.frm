@@ -1,18 +1,14 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form Facturacion 
-   BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Formulario"
    ClientHeight    =   9255
-   ClientLeft      =   45
-   ClientTop       =   390
+   ClientLeft      =   120
+   ClientTop       =   465
    ClientWidth     =   13590
    LinkTopic       =   "Form1"
-   MaxButton       =   0   'False
-   MinButton       =   0   'False
    ScaleHeight     =   9255
    ScaleWidth      =   13590
-   ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
    Begin VB.Frame Frame8 
       Height          =   615
@@ -706,6 +702,12 @@ Dim Producto As New ClaseProducto
 Dim alertaMostrada As Boolean
 Dim idProducto As Long
 'Dim nroFactura As Long
+' Método 1: Bloquear botones de la ventana usando API de Windows
+Private Declare Function GetSystemMenu Lib "user32" (ByVal hwnd As Long, ByVal bRevert As Long) As Long
+Private Declare Function DeleteMenu Lib "user32" (ByVal hMenu As Long, ByVal nPosition As Long, ByVal wFlags As Long) As Long
+
+Private Const SC_MAXIMIZE = &HF030
+Private Const MF_BYCOMMAND = &H0
 
 Private Sub Actualizar_Click()
     Dim test As String
@@ -842,6 +844,14 @@ End Sub
 Private Sub Form_Load()
     Dim Cantidad As Integer
     
+      Dim hMenu As Long
+    
+    ' Obtener el menú del sistema
+    hMenu = GetSystemMenu(Me.hwnd, False)
+    
+    ' Eliminar solo el botón de maximizar
+    DeleteMenu hMenu, SC_MAXIMIZE, MF_BYCOMMAND
+    
     fecha = "Fecha: " & Date
     CargarNumeroFactura
 
@@ -924,6 +934,13 @@ End If
 ErrHandler:
     MsgBox "Error al insertar: " & Err.Description, vbCritical, "Error"
     Call DesconectarBD
+End Sub
+
+Private Sub Form_Resize()
+    ' Restaurar el tamaño original si se intenta maximizar
+    If Me.WindowState = vbMaximized Then
+        Me.WindowState = vbNormal
+    End If
 End Sub
 
 Private Sub Grilla_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
