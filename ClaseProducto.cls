@@ -18,6 +18,7 @@ Private mPrecioUnitario As Double
 Private mCantidad As Integer
 Private mDescripcion As String
 
+
 ' Propiedad para el precio unitario
 Public Property Get precioNeto() As Double
     precioNeto = mPrecioNeto
