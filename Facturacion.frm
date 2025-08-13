@@ -78,7 +78,7 @@ Begin VB.Form Facturacion
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Format          =   171180033
+         Format          =   193200129
          CurrentDate     =   45777
       End
       Begin VB.Frame Frame9 
@@ -207,8 +207,8 @@ Begin VB.Form Facturacion
          TabIndex        =   21
          Top             =   7680
          Width           =   13095
-         Begin VB.CommandButton ImpArturo 
-            Caption         =   "&Comprobante neumaticos arturo"
+         Begin VB.CommandButton btnEmpresas 
+            Caption         =   "&Listado de empresas"
             BeginProperty Font 
                Name            =   "Tahoma"
                Size            =   9
@@ -219,12 +219,46 @@ Begin VB.Form Facturacion
                Strikethrough   =   0   'False
             EndProperty
             Height          =   375
-            Left            =   9600
+            Left            =   10200
+            TabIndex        =   47
+            Top             =   480
+            Width           =   2535
+         End
+         Begin VB.CommandButton btnNuciari 
+            Caption         =   "&Materiales Nuciari S.R.L."
+            BeginProperty Font 
+               Name            =   "Tahoma"
+               Size            =   9
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   615
+            Left            =   6600
+            TabIndex        =   46
+            Top             =   120
+            Width           =   1575
+         End
+         Begin VB.CommandButton ImpArturo 
+            Caption         =   "&Neumaticos arturo"
+            BeginProperty Font 
+               Name            =   "Tahoma"
+               Size            =   9
+               Charset         =   0
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   615
+            Left            =   4800
             MaskColor       =   &H00E0E0E0&
             Style           =   1  'Graphical
             TabIndex        =   30
-            Top             =   240
-            Width           =   3375
+            Top             =   120
+            Width           =   1575
          End
          Begin VB.TextBox txtTotal 
             BeginProperty Font 
@@ -237,11 +271,11 @@ Begin VB.Form Facturacion
                Strikethrough   =   0   'False
             EndProperty
             Height          =   375
-            Left            =   6000
+            Left            =   5280
             TabIndex        =   29
             Text            =   "$00.00"
             Top             =   600
-            Width           =   3495
+            Width           =   2655
          End
          Begin VB.TextBox txtIva 
             BeginProperty Font 
@@ -254,11 +288,11 @@ Begin VB.Form Facturacion
                Strikethrough   =   0   'False
             EndProperty
             Height          =   375
-            Left            =   3240
+            Left            =   2880
             TabIndex        =   28
             Text            =   "$00.00"
             Top             =   600
-            Width           =   2655
+            Width           =   2295
          End
          Begin VB.TextBox txtSubtotal 
             BeginProperty Font 
@@ -275,10 +309,10 @@ Begin VB.Form Facturacion
             TabIndex        =   27
             Text            =   "$00.00"
             Top             =   600
-            Width           =   3015
+            Width           =   2655
          End
          Begin VB.CommandButton ImpFederal 
-            Caption         =   "&Comprobante federal parts"
+            Caption         =   "&federal parts"
             BeginProperty Font 
                Name            =   "Tahoma"
                Size            =   9
@@ -288,19 +322,19 @@ Begin VB.Form Facturacion
                Italic          =   0   'False
                Strikethrough   =   0   'False
             EndProperty
-            Height          =   375
-            Left            =   9600
+            Height          =   615
+            Left            =   2880
             TabIndex        =   31
-            Top             =   840
-            Width           =   3375
+            Top             =   120
+            Width           =   1575
          End
          Begin VB.Line Line2 
             BorderColor     =   &H00000080&
             BorderWidth     =   3
             DrawMode        =   14  'Copy Pen
             Index           =   1
-            X1              =   6000
-            X2              =   8280
+            X1              =   5280
+            X2              =   7320
             Y1              =   480
             Y2              =   480
          End
@@ -308,8 +342,8 @@ Begin VB.Form Facturacion
             BorderColor     =   &H00008000&
             BorderWidth     =   3
             DrawMode        =   14  'Copy Pen
-            X1              =   3240
-            X2              =   4920
+            X1              =   2880
+            X2              =   4560
             Y1              =   480
             Y2              =   480
          End
@@ -336,7 +370,7 @@ Begin VB.Form Facturacion
                Strikethrough   =   0   'False
             EndProperty
             Height          =   210
-            Left            =   6000
+            Left            =   5280
             TabIndex        =   26
             Top             =   240
             Width           =   585
@@ -354,7 +388,7 @@ Begin VB.Form Facturacion
                Strikethrough   =   0   'False
             EndProperty
             Height          =   210
-            Left            =   3240
+            Left            =   2880
             TabIndex        =   23
             Top             =   240
             Width           =   1320
@@ -949,10 +983,6 @@ ErrHandler:
     Call DesconectarBD
 End Sub
 
-Private Sub Command1_Click()
-
-End Sub
-
 Private Sub btnFinalizar_Click()
 
 If Grilla.ListItems.Count > 0 Then
@@ -971,6 +1001,15 @@ End If
 ErrHandler:
     MsgBox "Error al eliminar el producto: " & Err.Description, vbCritical, "Error"
     Call DesconectarBD
+End Sub
+
+Private Sub Command1_Click()
+
+End Sub
+
+Private Sub btnNuciari_Click()
+If ValidadorMsg Then Exit Sub
+    GenerarComprobante3 txtSubtotal.Text, txtIva.Text, txtTotal.Text, Facturacion
 End Sub
 
 Private Sub Eliminar_Click()

@@ -1,6 +1,7 @@
 Facturacion = 52, 52, 837, 502, , 26, 26, 811, 476, C
-ModuloUtilidades = 208, 208, 941, 658, Z
+ModuloUtilidades = 208, 208, 941, 658, 
 ClaseProducto = 26, 26, 759, 476, 
-modConexion = 208, 208, 1357, 868, 
+modConexion = 208, 208, 1357, 868, Z
 modINI = 156, 156, 1086, 606, 
 ClaseCliente = 208, 208, 1476, 868, 
+frmListadoEmp = 0, 0, 0, 0, C, 208, 208, 1357, 868, C
