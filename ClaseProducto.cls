@@ -15,7 +15,7 @@ Option Explicit
 
 Private mPrecioNeto As Double
 Private mPrecioUnitario As Double
-Private mCantidad As Integer
+Private mCantidad As Long
 Private mDescripcion As String
 
 
@@ -38,11 +38,11 @@ Public Property Let PrecioUnitario(ByVal Valor As Double)
 End Property
 
 ' Propiedad para la cantidad
-Public Property Get Cantidad() As Integer
+Public Property Get Cantidad() As Long
     Cantidad = mCantidad
 End Property
 
-Public Property Let Cantidad(ByVal Valor As Integer)
+Public Property Let Cantidad(ByVal Valor As Long)
     If Valor < 0 Then
         mCantidad = 0
     Else

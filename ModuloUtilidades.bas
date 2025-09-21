@@ -204,8 +204,8 @@ Public Function GenerarComprobante(ByVal subTotal As Double, iva As Double, tota
     Print #Archivo, "    </div>"
     Print #Archivo, "  </div>"
     Print #Archivo, "  <div class='factura-section'>"
-    Print #Archivo, "    <div class='factura-label'>FACTURA</div>"
-    Print #Archivo, "    <div class='factura-num'><span class='factura-num-dos'>N°0001- " & "</span> <span class='factura-num-Font'>" & Format(nroFactura, "00000000") & "</span></div>"
+    Print #Archivo, "    <div class='factura-label'>FACTURA</div>";
+    Print #Archivo, "    <div class='factura-num'><span class='factura-num-dos'>" & Format(Facturacion.txtPunto.Text, "0000") & "- " & "</span> <span class='factura-num-Font'>" & Format(nroFactura, "00000000") & "</span></div>"
     Print #Archivo, "    <div class='factura-info'>"
     Print #Archivo, "      <p class='company-info company-space'>FECHA: " & Facturacion.fecEmision & "</p>"
     Print #Archivo, "      <p class='company-info'>C.U.I.T.: 33-71457404-9</p>"
@@ -288,7 +288,7 @@ Public Function GenerarComprobante(ByVal subTotal As Double, iva As Double, tota
     Print #Archivo, "<div class='totals-section-border'></div>"
     Print #Archivo, "<div class='footer'>"
     Print #Archivo, "  <p>C.A.I. N 2175-19625194739</p>"
-    Print #Archivo, "  <p>Fecha de Vencimiento: 11/09/2027</p>"
+    Print #Archivo, "  <p> Fecha de Vencimiento: " & Format(DateAdd("d", 7, Facturacion.fecEmision.Value), "dd/mm/yyyy") & "</p>"
     Print #Archivo, "  <p style='margin-left: 20px;'>REGISTRO PHG3523973</p>"
     Print #Archivo, "</div>"
     Print #Archivo, "</div>"
@@ -650,7 +650,7 @@ Public Function GenerarComprobante2(ByVal subTotal As Double, iva As Double, tot
     Print #Archivo, "                <div class='original-Copy'>ORIGINAL BLANCO / COPIA COLOR</div>"
     Print #Archivo, "                <div class='invoice-box'>"
     Print #Archivo, "                    <div class='factura-Text'>Factura</div>"
-    Print #Archivo, "                    <div class='factura-num'>N°0001- <span>" & Format(nroFactura, "00000000") & "</span></div>"
+    Print #Archivo, "                    <div class='factura-num'>N° " & Format(Facturacion.txtPunto.Text, "0000") & "-" & Format(nroFactura, "00000000") & "</div>"
     Print #Archivo, "                </div>"
     Print #Archivo, "                <div class='invoice-box'>"
     Print #Archivo, "                    <div class='Date-Section'>"
@@ -759,7 +759,7 @@ Public Function GenerarComprobante2(ByVal subTotal As Double, iva As Double, tot
     Print #Archivo, "                            <div style='border-top: 1px dashed #000; margin: 10px 0 0 0; padding-top: 10px;'></div>"
     Print #Archivo, "                            <div>"
     Print #Archivo, "                                <div>C.A.I. N° 0765-38126509472</div>"
-    Print #Archivo, "                                <div>Fecha de Vencimiento: 11/09/2027</div>"
+    Print #Archivo, "                                <div> Fecha de Vencimiento: " & Format(DateAdd("d", 7, Facturacion.fecEmision.Value), "dd/mm/yyyy") & "</div>"
     Print #Archivo, "                                <div style='display: flex; justify-content: flex-start; gap:3rem'>"
     Print #Archivo, "                                    <div style='margin-left: 10px; font-style: italic;'>CF</div>"
     Print #Archivo, "                                    <div>HHG1614169</div>"
@@ -1021,7 +1021,7 @@ Print #Archivo, "        <div class='letter'>A</div>"
 Print #Archivo, "      </div>"
 Print #Archivo, "      <div class='Right'>"
 Print #Archivo, "        <div class='factura-Labe'>FACTURA</div>"
-Print #Archivo, "        <div class='factura-num'>N 0001- " & Format(nroFactura, "00000000") & "</div>"
+Print #Archivo, "        <div class='factura-num'>N " & Format(Facturacion.txtPunto.Text, "0000") & "-" & Format(nroFactura, "00000000") & "</div>"
 Print #Archivo, "        <p class='p' style='margin-bottom: 0; margin-top: 0;'>Fecha: <span style='font-family: Courier New, Courier, monospace; color: gray;'>" & Facturacion.fecEmision & "</span></p>"
 Print #Archivo, "        <p class='p' style='margin-bottom: 0; margin-top: 0;'>C.U.I.T.: 30-68870966-7</p>"
 Print #Archivo, "        <p class='p' style='margin-bottom: 0; margin-top: 0;'>Ingresos Brutos: 30-68870966-7</p>"
@@ -1091,7 +1091,7 @@ Print #Archivo, "      <p>TOTAL $ " & Format$(total, "#,##0.00") & "</p>"
 Print #Archivo, "    </div>"
 Print #Archivo, "    <div class='footer'>"
 Print #Archivo, "      <p style='margin-bottom: 0;'>C.A.I. N 3164-36207872341</p>"
-Print #Archivo, "      <p style='margin-bottom: 0; margin-top: 0;'>Fecha de Vencimiento: " & Facturacion.fecEmision & "</p>"
+Print #Archivo, "      <p style='margin-bottom: 0; margin-top: 0;'>Fecha de Vencimiento: " & Format(DateAdd("d", 7, Facturacion.fecEmision.Value), "dd/mm/yyyy") & "</p>"
 Print #Archivo, "      <p style='margin-top: 0;'>CF Registro: HHG1625164</p>"
 Print #Archivo, "      <div style='display: flex;justify-content: space-evenly;'>"
 Print #Archivo, "        <div>"
@@ -1114,3 +1114,255 @@ Close #Archivo
     ' Abrir el comprobante en el navegador
     Shell "cmd /c start " & ruta, vbNormalFocus
 End Function
+'ByVal subTotal As Double, iva As Double, total As Double, formulario As Object
+'Public Function GenerarComprobanteMecanica(formulario As Object, nroFactura As String, fecEmision As String, _
+'                                          cuitEmpresa As String, ingBrutos As String, inicioAct As String, _
+'                                          clienteNombre As String, clienteDireccion As String, clienteCuit As String, _
+'                                          subTotal As Double, iva As Double, total As Double) As String
+Public Function GenerarComprobanteMecanica(ByVal subTotal As Double, iva As Double, total As Double, formulario As Object) As String
+
+    Dim Archivo As Integer
+    Dim ruta As String
+    Dim i As Integer
+    Dim rutaLogo As String
+    
+    Dim rutaImagen1 As String
+    Dim rutaImagen2 As String
+    Dim rutaImagen3 As String
+    Dim rutaImagen4 As String
+    Dim rutaImagen5 As String
+    Dim rutaImagen6 As String
+    Dim rutaImagen7 As String
+    Dim rutaImagen8 As String
+    Dim rutaImagen9 As String
+    Dim rutaImagen10 As String
+    
+    ruta = Environ$("USERPROFILE") & "\Documents\factura.html"
+    
+    If Right(App.Path, 1) = "\" Then
+        rutaImagen1 = App.Path & "generalmotors.png"
+        rutaImagen2 = App.Path & "chevrolet.png"
+        rutaImagen3 = App.Path & "izusu.png"
+        rutaImagen4 = App.Path & "suzuki.png"
+        rutaImagen5 = App.Path & "hyundai.png"
+        rutaImagen6 = App.Path & "mecanica.jpg"
+        rutaImagen7 = App.Path & "mblogo-antes.png"
+        rutaImagen8 = App.Path & "hyundai-logo-11.png"
+        rutaImagen9 = App.Path & "letrahyunda.png"
+        rutaImagen10 = App.Path & "gm.png"
+    Else
+        rutaImagen1 = App.Path & "\" & "generalmotors.png"
+        rutaImagen2 = App.Path & "\" & "chevrolet.png"
+        rutaImagen3 = App.Path & "\" & "izusu.png"
+        rutaImagen4 = App.Path & "\" & "suzuki.png"
+        rutaImagen5 = App.Path & "\" & "hyundai.png"
+        rutaImagen6 = App.Path & "\" & "mecanica.jpg"
+        rutaImagen7 = App.Path & "\" & "mblogo-antes.png"
+        rutaImagen8 = App.Path & "\" & "hyundai-logo-11.png"
+        rutaImagen9 = App.Path & "\" & "letrahyunda.png"
+        rutaImagen10 = App.Path & "\" & "gm.png"
+    End If
+    
+    Archivo = FreeFile()
+    Open ruta For Output As #Archivo
+    
+
+
+    ' ---------------- HTML ----------------
+    Print #Archivo, "<!DOCTYPE html>"
+    Print #Archivo, "<html lang=""es"">"
+    Print #Archivo, "<head>"
+    Print #Archivo, "<meta charset=""UTF-8"" />"
+    Print #Archivo, "<title>Factura - Mecanica Bragado S.A.</title>"
+    Print #Archivo, "<style>"
+    Print #Archivo, "  :root{ --left-col:50%; --b:1px; }"
+    Print #Archivo, "  body{ margin:0; padding:24px; font-family:'Arial Narrow',Arial,Helvetica,sans-serif; background:#fff; color:#000; -webkit-print-color-adjust:exact; print-color-adjust:exact; }"
+    Print #Archivo, "  .hoja{ width:650px; margin:0 auto; position:relative; box-sizing:border-box; padding:10px; }"
+    Print #Archivo, "  .encabezado{ position:relative; display:flex; }"
+    Print #Archivo, "  .borde{ border:var(--b) solid #000; }"
+    Print #Archivo, "  .semi-border{ border-right:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000; }"
+    Print #Archivo, "  .box{ padding:8px 10px; box-sizing:border-box; }"
+    Print #Archivo, "  .left-box{ width:var(--left-col); }"
+    Print #Archivo, "  .right-box{ width:calc(100% - var(--left-col)); position:relative; }"
+    Print #Archivo, "  .original{ position:absolute; top:6px; right:8px; font-weight:700; font-size:12px; letter-spacing:.5px; }"
+    Print #Archivo, "  .tipo-a{ position:absolute; top:46px; left:calc(var(--left-col) + 5px - 22px); width:32px; height:32px; border:var(--b) solid #000; background:#fff; display:grid; place-items:center; font-weight:700; font-size:18px; line-height:1; z-index:2; }"
+    Print #Archivo, "  .mb-row1{ display:flex; align-items:center; gap:10px; text-align:center; }"
+    Print #Archivo, "  .mb-logo{ font-size:24px; font-weight:800; letter-spacing:1px; }"
+    Print #Archivo, "  .mb-razon{ font-weight:700; font-size:14px; }"
+    Print #Archivo, "  .mb-sub{ font-size:8px; margin-top:-2px; font-weight:900; letter-spacing:-1px; }"
+    Print #Archivo, "  .marcas-top{ display:flex; align-items:center; flex-wrap:wrap; flex-direction:column; }"
+    Print #Archivo, "  .marcas-top img{ height:26px; }"
+    Print #Archivo, "  .mb-datos{ font-size:12px; line-height:1.25; text-align:center; }"
+    Print #Archivo, "  .div-centrado { text-align:center; display: flex; flex-direction: column; justify-content: center; height: 100%;}"
+    Print #Archivo, "  .fact-data{ font-size:12px; line-height:1.35; }"
+    Print #Archivo, "  .fact-title{ font-weight:700; }"
+    Print #Archivo, "  .cliente{ border-left:var(--b) solid #000; border-right:var(--b) solid #000; padding:8px 10px; display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px; }"
+    Print #Archivo, "  .cliente .label{ font-weight:700; }"
+    Print #Archivo, "  table{ width:100%; border-collapse:collapse; }"
+    Print #Archivo, "  thead{ border:var(--b) solid #000; }"
+    Print #Archivo, "  th,td{ padding:4px 6px; font-size:12px; }"
+    Print #Archivo, "  th{ text-align:center; }"
+    Print #Archivo, "  td{ vertical-align:top; }"
+    Print #Archivo, "  .num{ text-align:right; white-space:nowrap; }"
+    Print #Archivo, "  .center{ text-align:center; }"
+    Print #Archivo, "  .products{ border:1px solid #000; border-bottom:none; min-height:350px; position:relative; box-sizing:border-box; }"
+    Print #Archivo, "  .products table{ width:100%; border-collapse:collapse; }"
+    Print #Archivo, "  .products th,.products td{ text-align:center; font-size:12px; }"
+    Print #Archivo, "  .resumen{ position:relative; border-left:var(--b) solid #000; border-right:var(--b) solid #000; border-bottom:var(--b) solid #000; padding:8px 10px; box-sizing:border-box; }"
+    Print #Archivo, "  .resumen .mb-logo{ position:absolute; top:-20%; left:50%; transform:translate(-50%,-50%); opacity:.5; z-index:0; }"
+    Print #Archivo, "  .resumen .mb-logo img{ height:160px; width:34rem; }"
+    Print #Archivo, "  .grid-resumen{ display:grid; grid-template-columns:53px 70px 48px 130px 130px 150px; gap:6px; font-size:12px; align-items:center; }"
+    Print #Archivo, "  .grid-resumen .head{ font-weight:700; }"
+    Print #Archivo, "  .total-box{ margin-top:8px; display:flex; justify-content:flex-end; gap:8px; align-items:center; font-weight:700; font-size:16px; }"
+    Print #Archivo, "  .recibi{ border-top:var(--b) dashed #000; margin-top:12px; padding-top:8px; font-size:12px; border-bottom:var(--b) dashed #000; padding-bottom:8px; }"
+    Print #Archivo, "  .info-consumidor{ font-size:11px; margin:10px 0 4px 2px; }"
+    Print #Archivo, "  .cai{ border:var(--b) solid #000; padding:6px 10px; display:inline-block; font-size:11px; margin:4px 0; }"
+    Print #Archivo, "  .leyenda-bottom{ text-align:center; font-weight:700; letter-spacing:3.5px; }"
+    Print #Archivo, "  /* LOGOS LATERALES */"
+    Print #Archivo, "  .side-logo{ position:absolute; left:-20px; width:29px; opacity:.95; }"
+    Print #Archivo, "  .side-logo.right{ left:auto; right:-20px; }"
+    Print #Archivo, "  .side-chev.top{ top:114px; }"
+    Print #Archivo, "  .side-chev.right{ top:114px; }"
+    Print #Archivo, "  .side-isuzu{ top:232px; }"
+    Print #Archivo, "  .side-isuzu.right{ top:232px; }"
+    Print #Archivo, "  .side-suzuki{ top:410px; }"
+    Print #Archivo, "  .side-suzuki.right{ top:410px; }"
+    Print #Archivo, "  .side-hyundai{ bottom:256px; }"
+    Print #Archivo, "  .side-hyundai.right{ bottom:256px; }"
+    Print #Archivo, "  .side-logoult{ bottom:85px; }"
+    Print #Archivo, "  .side-logoult.right{ bottom:85px; }"
+    Print #Archivo, "  @media print{ @page{ size:A4 portrait; margin:15mm; } body{ display:flex; justify-content:center; } .hoja{ box-shadow:none; border:none; } }"
+    Print #Archivo, "</style>"
+    Print #Archivo, "</head>"
+    Print #Archivo, "<body>"
+
+    Print #Archivo, "<div class=""hoja"">"
+
+    ' -------- LOGOS LATERALES (IZQ y DER) --------
+    Print #Archivo, "  <img class=""side-logo side-chev top""       src=""" & rutaImagen1 & """ alt=""generalmotors"">"
+    Print #Archivo, "  <img class=""side-logo side-chev top right"" src=""" & rutaImagen1 & """ alt=""generalmotors"">"
+    Print #Archivo, "  <img class=""side-logo side-isuzu""          src=""" & rutaImagen2 & """     alt=""chevrolet"" style=""height:20px;width:30px;"">"
+    Print #Archivo, "  <img class=""side-logo side-isuzu right""    src=""" & rutaImagen2 & """     alt=""chevrolet"" style=""height:20px;width:30px;"">"
+    Print #Archivo, "  <img class=""side-logo side-suzuki""         src=""" & rutaImagen3 & """         alt=""isuzu"">"
+    Print #Archivo, "  <img class=""side-logo side-suzuki right""   src=""" & rutaImagen3 & """         alt=""isuzu"">"
+    Print #Archivo, "  <img class=""side-logo side-hyundai""        src=""" & rutaImagen4 & """        alt=""suzuki"">"
+    Print #Archivo, "  <img class=""side-logo side-hyundai right""  src=""" & rutaImagen4 & """       alt=""suzuki"">"
+    Print #Archivo, "  <img class=""side-logo side-logoult""        src=""" & rutaImagen5 & """       alt=""hyundai"">"
+    Print #Archivo, "  <img class=""side-logo side-logoult right""  src=""" & rutaImagen5 & """       alt=""hyundai"">"
+
+    ' -------- ENCABEZADO --------
+    Print #Archivo, "  <div class=""encabezado"">"
+    Print #Archivo, "    <div class=""tipo-a"">A</div>"
+    Print #Archivo, "    <div class=""box left-box borde"">"
+    Print #Archivo, "      <div class=""mb-row1"">"
+    Print #Archivo, "        <div class=""mb-logo""><img src=""" & rutaImagen6 & """ alt=""""></div>"
+    Print #Archivo, "        <div>"
+    Print #Archivo, "          <div class=""mb-razon"">MECANICA BRAGADO S.A.</div>"
+    Print #Archivo, "          <div class=""mb-sub"">SERVICIO OFICIAL - VENTA DE REPUESTOS</div>"
+    Print #Archivo, "        </div>"
+    Print #Archivo, "      </div>"
+    Print #Archivo, "      <div class=""marcas-top"">"
+    Print #Archivo, "        <div style=""display:flex;align-items:center;gap:35px;"">"
+    Print #Archivo, "          <div style=""display:flex;align-items:flex-end;gap:6px;""><img src=" & rutaImagen10 & " ><p style=""font-size:12px;font-weight:700;margin:0px;"">General Motors</p></div>"
+    Print #Archivo, "          <img src=" & rutaImagen2 & " style=""height:41px;"">"
+    Print #Archivo, "          <img src=" & rutaImagen8 & ">"
+    Print #Archivo, "        </div>"
+    Print #Archivo, "        <div style=""display:flex;gap:42px;"">"
+    Print #Archivo, "          <img src=" & rutaImagen4 & " style=""height:13px;"">"
+    Print #Archivo, "          <img src=" & rutaImagen3 & "  style=""height:13px;"">"
+    Print #Archivo, "          <img src=" & rutaImagen9 & " style=""height:13px;"">"
+    Print #Archivo, "        </div>"
+    Print #Archivo, "      </div>"
+    Print #Archivo, "      <div class=""mb-datos"">"
+    Print #Archivo, "        Mecanica Bragado S.A.<br>Av. J. Bautista Alberdi 5024/28<br>C.P.(C1440ABO) / C.A.B.A.<br>IVA RESPONSABLE INSCRIPTO<br>"
+    Print #Archivo, "      </div>"
+    Print #Archivo, "      <p style=""font-size:11px;text-align:end;margin:0;"">www.mbservicios.com.ar</p>"
+    Print #Archivo, "    </div>"
+    Print #Archivo, "    <div class=""box right-box semi-border"">"
+    Print #Archivo, "      <div class=""original"">ORIGINAL</div>"
+    Print #Archivo, "      <div class=""fact-data div-centrado"">"
+    Print #Archivo, "        <div class=""fact-title"">Factura  N " & Format(Facturacion.txtPunto.Text, "0000") & "-" & Format(nroFactura, "00000000") & "</div>"
+    Print #Archivo, "        Fecha: " & Facturacion.fecEmision & "<br>C.U.I.T.: 33-70859067-9<br>Ingresos Brutos: 961-576372-7<br>Inicio de Actividades: 09/12/03"
+    Print #Archivo, "      </div>"
+    Print #Archivo, "    </div>"
+    Print #Archivo, "  </div>"
+
+    ' -------- CLIENTE --------
+    Print #Archivo, "  <div class=""cliente"">"
+    Print #Archivo, "    <div>"
+    Print #Archivo, "      <div>" & Facturacion.txtNombre.Text & "</div>"
+    Print #Archivo, "      <div>" & Facturacion.txtDireccion.Text & "</div>"
+    Print #Archivo, "      <div>1439 - CIUDAD AUTONOMA BUENOS AIRES</div>"
+    Print #Archivo, "    </div>"
+    Print #Archivo, "    <div>"
+    Print #Archivo, "      <div>C.U.I.T.: " & Facturacion.txtCuit.Text & "</div>"
+    Print #Archivo, "      <div>IVA RESPONSABLE INSCRIPTO</div>"
+    Print #Archivo, "    </div>"
+    Print #Archivo, "  </div>"
+
+    ' -------- ITEMS --------
+    Print #Archivo, "  <div class='products'>"
+    Print #Archivo, "    <table style='font-family: Courier New, Courier, monospace;'>"
+    Print #Archivo, "      <tr>"
+    Print #Archivo, "        <th style='width:10%;'>CANTIDAD</th>"
+    Print #Archivo, "        <th style='width:25%;'>DESCRIPCION</th>"
+    Print #Archivo, "        <th style='width:20%;'>PRECIO UNITARIO</th>"
+    Print #Archivo, "        <th style='width:15%;'>ALICUOTA IVA</th>"
+    Print #Archivo, "        <th style='width:15%;'>% BASE IVA</th>"
+    Print #Archivo, "        <th style='width:25%;'>PRECIO NETO</th>"
+    Print #Archivo, "      </tr>"
+    ' Recorrer ListView y agregar filas a la tabla
+    With formulario
+    For i = 1 To .Grilla.ListItems.Count
+        Dim Cantidad As Integer
+        Dim Descripcion As String
+        Dim PrecioUnitario As String
+        Dim totalProducto As Double
+        Dim AlicuotaIva As Double
+        Dim BaseIva As String
+
+        Cantidad = .Grilla.ListItems(i).SubItems(2)
+        Descripcion = .Grilla.ListItems(i).SubItems(1)
+        PrecioUnitario = ""
+        AlicuotaIva = .Grilla.ListItems(i).SubItems(3)
+        BaseIva = "(21.00)"
+        totalProducto = .Grilla.ListItems(i).SubItems(4)
+
+        Print #Archivo, "<tr><td style='width: 15%; text-align: center; font-family: Courier New, Courier, monospace; color: gray;'>" & Cantidad & "</td>"
+        Print #Archivo, "<td style='width: 40%; text-align: left; text-transform: uppercase; font-family: Courier New, Courier, monospace; color: gray;'>" & Descripcion & "</td>"
+        Print #Archivo, "<td style='width: 10%; text-align: center; font-family: Courier New, Courier, monospace; color: gray;'></td>"
+        Print #Archivo, "<td style='width: 25%; text-align: center; font-family: Courier New, Courier, monospace; color: gray;'>" & Format(AlicuotaIva, "#,##0.00") & "</td>"
+        Print #Archivo, "<td style='width: 25%; text-align: center; font-family: Courier New, Courier, monospace; color: gray;'>" & BaseIva & "</td>"
+        Print #Archivo, "<td style='width: 25%; text-align: center; font-family: Courier New, Courier, monospace; color: gray;'>" & Format(totalProducto, "#,##0.00") & "</td></tr>"
+
+'        subTotal = subTotal + totalProducto
+    Next i
+    End With
+    Print #Archivo, "    </table>"
+    Print #Archivo, "  </div>"
+
+    ' -------- RESUMEN --------
+    Print #Archivo, "  <div class='resumen'>"
+    Print #Archivo, "    <div class='mb-logo'><img src=" & rutaImagen7 & " alt=""""><div class='watermark' style='font-weight:900;font-style:italic;text-align:center;opacity:.5;'>MECANICA BRAGADO S.A.</div></div>"
+    Print #Archivo, "    <div style='font-size:11px;margin-bottom:6px;'>SON 1 HOJAS<span style='float:right;'>HOJA N 1</span></div>"
+    Print #Archivo, "    <div class='grid-resumen'>"
+    Print #Archivo, "      <div class='head'>SUBTOTAL</div><div class='head'>ALICUOTA IVA</div><div class='head'>IVA</div><div class='head'>PERCEPCIONES IVA</div><div class='head'>PERCEPCIONES OTROS</div><div class='head'>CONCEPTO NO GRAVADOS</div>"
+    Print #Archivo, "      <div>" & Format$(subTotal, "#,##0.00") & "</div><div>(21,00)</div><div>" & Format$(iva, "#,##0.00") & "</div><div></div><div></div><div style='text-align:end;'>0,00</div>"
+    Print #Archivo, "    </div>"
+    Print #Archivo, "    <div class='total-box' style='justify-content:space-between;'><span>Recibi(mos):</span><span>TOTAL $</span><span>" & Format$(total, "#,##0.00") & "</span></div>"
+    Print #Archivo, "    <div class='recibi'><div>147 Telefono gratuito</div><div>C.A.B.A. Area de defensa</div><div>y proteccion al consumidor</div></div>"
+    Print #Archivo, "    <div style='font-size:12px;padding-top:8px;'><div>C.A.I. N 5501-8649435017</div><div> Fecha de Vencimiento: " & Format(DateAdd("d", 7, Facturacion.fecEmision.Value), "dd/mm/yyyy") & "</div><div><span style='font-style:italic;'>CF</span> HH03501668</div><div style='font-style:italic;'>DGI</div></div>"
+    Print #Archivo, "  </div>"
+
+    Print #Archivo, "  <div class='leyenda-bottom'>SERVICIO AUTORIZADO - REPUESTOS LEGITIMOS</div>"
+
+    Print #Archivo, "</div>"
+    Print #Archivo, "</body>"
+    Print #Archivo, "</html>"
+
+    Close #Archivo
+
+    ' Abre el archivo generado
+    Shell "cmd /c start " & ruta, vbNormalFocus
+End Function
+
